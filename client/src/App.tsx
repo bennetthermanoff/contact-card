@@ -24,9 +24,7 @@ type VcardEntry = {
 };
 
 function App() {
-  const [contact, setContact] = React.useState<VcardJson>({
-    
-  });
+  const [contact, setContact] = React.useState<VcardJson>({});
   const getContact = async () => {
     const response = await axios.get('/api/person/bennett');
     setContact(response.data);
