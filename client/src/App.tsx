@@ -4,6 +4,7 @@ import './App.css';
 import axios from 'axios';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
+import { DownloadButton } from './Components/DownloadButton';
 
 function App() {
   const [contact, setContact] = React.useState<VcardJson>({});
@@ -30,6 +31,7 @@ function App() {
         <h2>{`Name: ${getEntry(contact, "FN")}`}</h2>
         <ContactImage contact={contact} />
         <input type="text" value={contactId} onChange={(e) => setContactId(e.target.value)} />
+        <DownloadButton contactId={contactId} />
       </header>
     </div>
   );
