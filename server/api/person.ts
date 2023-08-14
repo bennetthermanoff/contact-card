@@ -1,5 +1,4 @@
 import util from 'util';
-// @ts-ignore
 import vcard from 'vcard';
 import express from 'express';
 import fs from 'fs';
