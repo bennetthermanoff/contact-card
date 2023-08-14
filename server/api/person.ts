@@ -14,11 +14,10 @@ export const getPersonFromVcard = (id: string, res: express.Response) => {
     card.readData(readFile, (err: any, json: any) => {
         if (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).json({ error: err });
         }
         else {
-            console.log(json);
-            res.send(json);
+            res.status(200).json(json);
         }
     });
     
