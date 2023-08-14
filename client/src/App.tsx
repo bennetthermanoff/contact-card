@@ -12,6 +12,7 @@ function App() {
 
   React.useEffect(() => {
     getContact();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[contactId]);
 
   const getContact = async () => {
