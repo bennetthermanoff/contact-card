@@ -2,36 +2,34 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
-import { VcardJson } from './types/Vcard';
+import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 
 function App() {
   const [contact, setContact] = React.useState<VcardJson>({});
+  const [contactId, setContactId] = React.useState<string>('bennett');
 
   React.useEffect(() => {
     getContact();
-  },[]);
+  },[contactId]);
+
   const getContact = async () => {
-    const response = await axios.get('/api/person/bennett');
+    try {
+    const response = await axios.get(`/api/person/${contactId}`);
     setContact(response.data);
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
     
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h2>{`Name: ${getEntry(contact, "FN")}`}</h2>
         <ContactImage contact={contact} />
+        <input type="text" value={contactId} onChange={(e) => setContactId(e.target.value)} />
       </header>
     </div>
   );

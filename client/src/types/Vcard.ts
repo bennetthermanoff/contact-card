@@ -2,7 +2,10 @@ export type VcardJson = {
     REV?: VcardEntry;
     FN?: VcardEntry;
     N?: VcardEntry;
-    PHOTO?: VcardEntry;
+    PHOTO?: {
+        value: string;
+        type: string;
+    };
     TEL?: VcardEntry;
     EMAIL?: VcardEntry;
     URL?: VcardEntry;
@@ -13,8 +16,25 @@ export type VcardJson = {
     BDAY?: VcardEntry;
     IMPP?: VcardEntry;
     //More of these entries can be added, idk what every vcard entry is
-  };
-  export type VcardEntry = {
+};
+export type VcardEntry = VcardEntryTypeValue | string;
+
+export type VcardEntryTypeValue = {
     value: string;
     type: string;
-  };
+};
+
+
+export const getEntry = (json: VcardJson, entry: keyof VcardJson) => {
+    if (json[entry]) {
+        if (typeof json[entry] === 'string') {
+            return json[entry];
+        }
+        else {
+            return (json[entry] as VcardEntryTypeValue)?.value;
+        }
+    }
+    else {
+        return '';
+    }
+}
