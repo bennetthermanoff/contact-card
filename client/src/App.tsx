@@ -7,7 +7,7 @@ import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
 
 function App() {
-  const [contact, setContact] = React.useState<VcardJson>({});
+  const [contact, setContact] = React.useState<VcardJson>({FN:'Contact not found'});
   const [contactId, setContactId] = React.useState<string>('bennett');
 
   React.useEffect(() => {
