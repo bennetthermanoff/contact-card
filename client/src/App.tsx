@@ -4,6 +4,7 @@ import axios from 'axios';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
+import { MajorTags } from './Components/MajorTags';
 
 export const App = () => {
     const [contact, setContact] = useState<VcardJson>({
@@ -28,20 +29,19 @@ export const App = () => {
     return (
         <div className="App">
             <div className="cardContainer">
-                <div className="contactImage">
-                    <ContactImage
-                        contact={contact}
-                        size={100}
-                        isQrDisplayed={isQrDisplayed}
-                    />
-                </div>
-                <div className="contactInfo">
-                    <h1 className="contactName">{`Name: ${getEntry(contact, 'FN')}`}</h1>
-                    <h3 className="contactPronouns">{`${getEntry(
-                        contact,
-                        'X-PHONETIC-FIRST-NAME',
-                    )}`}</h3>
-                    {/* <h2 className='contactMajor'>{`${getEntry(contact, "X-MAJOR")}`}</h2> */}
+                <div className="rowGroup">
+                    <div className="contactImage">
+                        <ContactImage
+                            contact={contact}
+                            size={300}
+                            isQrDisplayed={isQrDisplayed}
+                        />
+                    </div>
+                    <div className="contactInfo">
+                        <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1>
+                        <h3 className="contactPronouns">{`${getEntry(contact,'X-PHONETIC-FIRST-NAME')} ${getEntry(contact,'X-PHONETIC-LAST-NAME')}`}</h3>
+                        <MajorTags contact={contact}/>                    
+                    </div>
                 </div>
                 <div className="contactDescription">
                     <p className="contactDescription">{`${getEntry(contact, 'NOTE')}`}</p>
@@ -51,9 +51,7 @@ export const App = () => {
                     <button
                         className='qrButton'
                         onClick={() => setIsQrDisplayed(!isQrDisplayed)}
-                    >
-            Show QR
-                    </button>
+                    >Show QR</button>
                 </div>
             </div>
         </div>
