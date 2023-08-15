@@ -8,7 +8,7 @@ module.exports = {
         semi: ['error', 'always'],
         'space-infix-ops': 'error',
         'keyword-spacing': ['error', { after: true }],
-        'func-call-spacing': ['error', 'always'],
+        'func-call-spacing': ['error', 'never'],
         'object-curly-spacing': ['error', 'always'],
         'function-paren-newline': ['error', 'multiline'],
 

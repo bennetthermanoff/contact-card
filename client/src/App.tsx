@@ -6,22 +6,22 @@ import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
 
 export const App = () => {
-    const [contact, setContact] = useState<VcardJson> ({
+    const [contact, setContact] = useState<VcardJson>({
         FN: 'Contact not found',
     });
-    const [isQrDisplayed, setIsQrDisplayed] = useState (false);
-    const idFromParams = window.location.pathname.split ('/')[2];
+    const [isQrDisplayed, setIsQrDisplayed] = useState(false);
+    const idFromParams = window.location.pathname.split('/')[2];
 
-    useEffect (() => {
-        getContact ();
+    useEffect(() => {
+        getContact();
     }, []);
 
     const getContact = async () => {
         try {
-            const response = await axios.get (`/api/person/${idFromParams}`);
-            setContact (response.data);
+            const response = await axios.get(`/api/person/${idFromParams}`);
+            setContact(response.data);
         } catch (error) {
-            console.log (error);
+            console.log(error);
         }
     };
 
@@ -36,21 +36,21 @@ export const App = () => {
                     />
                 </div>
                 <div className="contactInfo">
-                    <h1 className="contactName">{`Name: ${getEntry (contact, 'FN')}`}</h1>
-                    <h3 className="contactPronouns">{`${getEntry (
+                    <h1 className="contactName">{`Name: ${getEntry(contact, 'FN')}`}</h1>
+                    <h3 className="contactPronouns">{`${getEntry(
                         contact,
                         'X-PHONETIC-FIRST-NAME',
                     )}`}</h3>
                     {/* <h2 className='contactMajor'>{`${getEntry(contact, "X-MAJOR")}`}</h2> */}
                 </div>
                 <div className="contactDescription">
-                    <p className="contactDescription">{`${getEntry (contact, 'NOTE')}`}</p>
+                    <p className="contactDescription">{`${getEntry(contact, 'NOTE')}`}</p>
                 </div>
                 <div className="contactButtons">
                     <DownloadButton contactId={idFromParams} />
                     <button
                         className='qrButton'
-                        onClick={() => setIsQrDisplayed (!isQrDisplayed)}
+                        onClick={() => setIsQrDisplayed(!isQrDisplayed)}
                     >
             Show QR
                     </button>
