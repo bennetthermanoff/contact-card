@@ -26,13 +26,13 @@ export type VcardEntryTypeValue = {
 };
 
 export const getEntry = (json: VcardJson, entry: keyof VcardJson) => {
-	if (json[entry]) {
-		if (typeof json[entry] === 'string') {
-			return json[entry];
-		} else {
-			return (json[entry] as VcardEntryTypeValue)?.value;
-		}
-	} else {
-		return '';
-	}
+    if (json[entry]) {
+        if (typeof json[entry] === 'string') {
+            return json[entry];
+        } else {
+            return (json[entry] as VcardEntryTypeValue)?.value;
+        }
+    } else {
+        return '';
+    }
 };

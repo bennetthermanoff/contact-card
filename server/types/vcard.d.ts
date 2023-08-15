@@ -1,1 +1,1 @@
-declare module "vcard";
+declare module 'vcard';

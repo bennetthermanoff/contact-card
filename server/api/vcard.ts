@@ -4,5 +4,5 @@ export const getVcardFile = async (
 	res: express.Response,
 ) => {
 	const { id } = req.params;
-	res.download(`./contacts/${id}.vcf`);
+	res.download (`./contacts/${id}.vcf`);
 };

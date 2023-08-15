@@ -7,22 +7,22 @@ export const getPerson = async (
 	res: express.Response,
 ) => {
 	const { id } = req.params;
-	getPersonFromVcard(id, res);
+	getPersonFromVcard (id, res);
 };
 export const getPersonFromVcard = (id: string, res: express.Response) => {
-	const card = new vcard();
+	const card = new vcard ();
 	try {
-		const readFile = fs.readFileSync(`./contacts/${id}.vcf`, 'utf8');
-		card.readData(readFile, (err: any, json: any) => {
+		const readFile = fs.readFileSync (`./contacts/${id}.vcf`, 'utf8');
+		card.readData (readFile, (err: any, json: any) => {
 			if (err) {
-				console.log(err);
-				res.status(500).json({ error: err });
+				console.log (err);
+				res.status (500).json ({ error: err });
 			} else {
-				res.status(200).json(json);
+				res.status (200).json (json);
 			}
 		});
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({ error: err });
+		console.log (err);
+		res.status (500).json ({ error: err });
 	}
 };
