@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement,
 const Router = createBrowserRouter([
     {
         path: '/',
-        element: <h1>Go to a contact /contact/:id </h1>,
+        element: <h1 className='App'>Go to a contact /contact/:id </h1>,
         errorElement: <h1>Not Found</h1>,
     },
     {

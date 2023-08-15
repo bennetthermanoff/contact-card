@@ -9,6 +9,9 @@ import { MajorTags } from './Components/MajorTags';
 export const App = () => {
     const [contact, setContact] = useState<VcardJson>({
         FN: 'Contact Loading',
+        'X-PHONETIC-FIRST-NAME':'(load/ing)',
+        'ORG':'loading',
+        NOTE: 'loading',
     });
     const [isQrDisplayed, setIsQrDisplayed] = useState(false);
     const idFromParams = window.location.pathname.split('/')[2];
@@ -23,7 +26,11 @@ export const App = () => {
             setContact(response.data);
         } catch (error) {
             console.log(error);
-            setContact({ FN: 'Contact Not Found' });
+            setContact({ FN: 'Contact Not Found',
+                'X-PHONETIC-FIRST-NAME':'(err/or)',
+                'ORG':'not found',
+                NOTE: 'contact not found 😔',
+            });
         }
     };
 
