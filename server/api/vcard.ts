@@ -1,9 +1,8 @@
-import fs from "fs";
-import express from "express";
+import express from 'express';
 export const getVcardFile = async (
-  req: express.Request,
-  res: express.Response,
+	req: express.Request,
+	res: express.Response,
 ) => {
-  const { id } = req.params;
-  res.download(`./contacts/${id}.vcf`);
+	const { id } = req.params;
+	res.download(`./contacts/${id}.vcf`);
 };

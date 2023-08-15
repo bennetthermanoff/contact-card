@@ -15,7 +15,7 @@ export type VcardJson = {
   NOTE?: VcardEntry;
   BDAY?: VcardEntry;
   IMPP?: VcardEntry;
-  "X-PHONETIC-FIRST-NAME"?: VcardEntry;
+  'X-PHONETIC-FIRST-NAME'?: VcardEntry;
   //More of these entries can be added, idk what every vcard entry is
 };
 export type VcardEntry = VcardEntryTypeValue | string;
@@ -26,13 +26,13 @@ export type VcardEntryTypeValue = {
 };
 
 export const getEntry = (json: VcardJson, entry: keyof VcardJson) => {
-  if (json[entry]) {
-    if (typeof json[entry] === "string") {
-      return json[entry];
-    } else {
-      return (json[entry] as VcardEntryTypeValue)?.value;
-    }
-  } else {
-    return "";
-  }
+	if (json[entry]) {
+		if (typeof json[entry] === 'string') {
+			return json[entry];
+		} else {
+			return (json[entry] as VcardEntryTypeValue)?.value;
+		}
+	} else {
+		return '';
+	}
 };
