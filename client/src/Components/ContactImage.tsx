@@ -1,5 +1,6 @@
 import { VcardJson } from '../types/Vcard';
 import { QR } from './QR';
+import tempImage from '../assets/tempImage.jpg';
 
 export const ContactImage = ({
     contact,
@@ -22,7 +23,7 @@ export const ContactImage = ({
                 />
             );
         } else {
-            return null;
+            return (<img src={tempImage} alt="profile" height={size} />);
         }
     }
 };
