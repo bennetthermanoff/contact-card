@@ -4,17 +4,17 @@
     color: black;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    margin: 0.5rem 0;
+    margin: 0.5rem .1rem;
     display: inline-block;
     text-decoration: none;
-    transition: all 0.3s ease-in-out;
+    transition: all 2s ease-in-out;
     box-shadow: 0 0 0.5rem rgba(0,0,0,0.2);
     &:hover{
         transform: scale(1.1);
     }
     /* support safari and firefox hover*/
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    
+    -webkit-transition: all 2s ease-in-out;
+    -moz-transition: all 2s ease-in-out;
+
    
 }

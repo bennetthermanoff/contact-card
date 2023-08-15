@@ -49,7 +49,7 @@ export const App = () => {
                 <div className="contactButtons">
                     <DownloadButton contactId={idFromParams} />
                     <button
-                        className='qrButton'
+                        className='contactButton'
                         onClick={() => setIsQrDisplayed(!isQrDisplayed)}
                     >Show QR</button>
                 </div>

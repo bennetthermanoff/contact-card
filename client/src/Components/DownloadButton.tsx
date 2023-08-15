@@ -16,5 +16,5 @@ export const DownloadButton = ({ contactId }: { contactId: string }) => {
                 console.log(error);
             });
     };
-    return <button onClick={download}>Download</button>;
+    return <button className='contactButton' onClick={download}>Download</button>;
 };
