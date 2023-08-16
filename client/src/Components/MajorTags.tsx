@@ -20,5 +20,4 @@ export const MajorTags = ({ contact }:{contact:VcardJson})=>{
             })}
         </div>
     );
-    
 };

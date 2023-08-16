@@ -19,6 +19,9 @@ export const App = () => {
     useEffect(() => {
         getContact();
     }, []);
+    useEffect(() => {
+        document.title = `${getEntry(contact, 'FN')}`;
+    }, [contact]);
 
     const getContact = async () => {
         try {
