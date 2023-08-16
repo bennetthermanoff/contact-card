@@ -1,20 +1,18 @@
-.major-tag{
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: black;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    margin: 0.5rem .1rem;
-    display: inline-block;
-    text-decoration: none;
-    transition: all 1s ease-in-out;
-    box-shadow: 0 0 0.5rem rgba(0,0,0,0.2);
-    &:hover{
-        transform: scale(1.1);
-    }
-    /* support safari and firefox hover*/
-    -webkit-transition: all 1s ease-in-out;
-    -moz-transition: all 1s ease-in-out;
-
-   
+.major-tag {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0.1rem;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 1s ease-in-out;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+  &:hover {
+    transform: scale(1.04);
+  }
+  /* support safari and firefox hover*/
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
 }
