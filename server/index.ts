@@ -12,6 +12,9 @@ app.use(express.urlencoded({ extended: false }));
 app.get('/api/person/:id', getPerson);
 app.get('/api/vcard/:id', getVcardFile);
 if (process.env.IS_PROD) {
+	if (process.pid) {
+		console.log('This process is running on pid ' + process.pid);
+	}
 	PORT = 3000;
 	app.use(express.static(path.join(__dirname, '../client/build')));
 	console.log('IS_PROD');
