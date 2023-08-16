@@ -14,6 +14,7 @@ app.get('/api/vcard/:id', getVcardFile);
 if (process.env.IS_PROD) {
 	PORT = 3000;
 	app.use(express.static(path.join(__dirname, '../client/build')));
+	console.log('IS_PROD');
 	app.get('*', (req, res) => {
 		res.sendFile(path.join(__dirname, '../client/build/index.html'));
 	});
