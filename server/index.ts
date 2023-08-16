@@ -21,6 +21,10 @@ if (process.env.IS_PROD) {
 	app.get('*', (req, res) => {
 		res.sendFile(path.join(__dirname, '../client/build/index.html'));
 	});
+	process.on('unhandledRejection', (reason, p) => {
+		console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason);
+		// application specific logging, throwing an error, or other logic here
+	});
 }
 
 
