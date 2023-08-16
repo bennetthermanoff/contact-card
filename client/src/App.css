@@ -1,5 +1,4 @@
-
-.App{
+.App {
   background-color: rgb(49, 11, 11);
   min-height: 100vh;
   display: flex;
@@ -9,9 +8,8 @@
   font-size: calc(10px + 2vmin);
   color: white;
   text-align: center;
-
 }
-.cardContainer{
+.cardContainer {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -20,17 +18,17 @@
   width: 75%;
   background-color: #620808;
   padding: 25px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   border-radius: 25px;
 }
-.rowGroup{
+.rowGroup {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: left;
   align-content: start;
 }
-.contactInfo{
+.contactInfo {
   padding-left: 25px;
   display: flex;
   flex-direction: column;
@@ -38,55 +36,56 @@
   align-items: flex-start; /* Align items to the top-left */
   gap: 0; /* Remove space between items */
 }
-.contactName{
+.contactName {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0; /* Remove any default margin */
   text-align: left;
 }
-.contactPronouns{
+.contactPronouns {
   font-size: 1.2em;
   font-weight: bold;
   margin: 0; /* Remove any default margin */
   text-align: left;
   opacity: 0.5;
 }
-.contactMajor{
+.contactMajor {
   font-size: 1.2em;
   font-weight: bold;
   margin: 0; /* Remove any default margin */
   text-align: left;
   opacity: 0.75;
 }
-.contactButton{
+.contactButton {
   font-size: 1.5rem;
-    font-weight: 600;
-    color: black;
-    background-color: #ffdddd;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    margin: 0.5rem .5rem;
-    display: inline-block;
-    text-decoration: none;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 0.5rem rgba(0,0,0,0.2);
-    &:hover{
-        transform: scale(1.1);
-    }
-    /* support safari and firefox hover*/
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
+  font-weight: 600;
+  color: black;
+  background-color: #ffdddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  margin: 0.5rem 0.5rem;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+  &:hover {
+    transform: scale(1.04);
+  }
+  /* support safari and firefox hover*/
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
 }
 /* if mobile, contact details display below image */
 @media only screen and (max-width: 600px) {
-  .rowGroup{
+  .rowGroup {
     flex-direction: column;
   }
-  .contactInfo{
+  .contactInfo {
     padding-left: 0px;
     align-items: center;
   }
-  .contactButton{
+  .contactButton {
     margin: 0.5rem 0.5rem;
   }
 }
