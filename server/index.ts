@@ -1,6 +1,6 @@
 import express from 'express';
 import { getPerson } from './api/person';
-import { getVcardFile } from './api/vcard';
+import { getVcardFile, createVcardFile } from './api/vcard';
 let PORT = 3001;
 const app = express();
 import path from 'path';
@@ -11,6 +11,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get('/api/person/:id', getPerson);
 app.get('/api/vcard/:id', getVcardFile);
+app.post('/api/vcard', createVcardFile);
+
 if (process.env.IS_PROD) {
 	if (process.pid) {
 		console.log('This process is running on pid ' + process.pid);

@@ -1,5 +1,6 @@
 import express from 'express';
-import { vCardsJs } from 'vcards-js';
+import vCardsJS from '@tapni/vcards-js';
+import fs from 'fs';
 export const getVcardFile = async (
 	req: express.Request,
 	res: express.Response,
@@ -19,7 +20,7 @@ export const createVcardFile = async (
 ) => {
 	try {
 		const { id, name, pronouns, year, description, majors, photoBinary, photoType  } = req.body;
-		const vCard = vCardsJs();
+		const vCard = vCardsJS();
 		vCard.firstName = name;
 		vCard.organization = majors;
 		vCard.photo.embedFromString(photoBinary, photoType);
@@ -27,7 +28,11 @@ export const createVcardFile = async (
 		vCard.role = year;
 		vCard.suffix = pronouns;
 		vCard.version = '3.0';
-		vCard.saveToFile(`./contacts/${id}.vcf`);
+		let fileName = id;
+		while (fs.existsSync(`./contacts/${fileName}.vcf`)){
+			fileName += Math.floor(Math.random() * 100);
+		}
+		vCard.saveToFile(`./contacts/${fileName}.vcf`);
 		const output = vCard.getFormattedString();
 		res.status(200).json({ message: 'Success' , output });
 	} catch (error) {

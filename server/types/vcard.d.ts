@@ -1,2 +1,2 @@
 declare module 'vcard';
-declare module 'vcards-js';
+declare module '@tapni/vcards-js';
