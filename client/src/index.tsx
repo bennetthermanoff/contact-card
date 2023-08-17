@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './App';
+import { CreateContact } from './CreateContact';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -10,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement,
 const Router = createBrowserRouter([
     {
         path: '/',
-        element: <h1 className='App'>Go to a contact /contact/:id </h1>,
+        element: <CreateContact />,
         errorElement: <h1>Not Found</h1>,
     },
     {

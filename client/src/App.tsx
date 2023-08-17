@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
+import { getContactById } from './api/contactApi';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
@@ -25,7 +26,7 @@ export const App = () => {
 
     const getContact = async () => {
         try {
-            const response = await axios.get(`/api/person/${idFromParams}`);
+            const response = await getContactById(idFromParams);
             setContact(response.data);
         } catch (error) {
             console.log(error);
