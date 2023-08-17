@@ -7,7 +7,7 @@ export const MajorTags = ({ contact }:{contact:VcardJson})=>{
     return (
         <div className="major-tags">
             {majors.map((major, index)=>{
-                const h = index === 1 ? 47 : 7;
+                const h = index % 2 === 0 ? 47 : 7;
                 return <span style={{ backgroundColor: `hsl(${h}, 90%, 80%)` }}
                     key={index} className="major-tag">{major.trim().split('\\')}</span>;
             })}
