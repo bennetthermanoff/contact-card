@@ -33,8 +33,7 @@ export const createVcardFile = async (
 			fileName += Math.floor(Math.random() * 100);
 		}
 		vCard.saveToFile(`./contacts/${fileName}.vcf`);
-		const output = vCard.getFormattedString();
-		res.status(200).json({ message: 'Success' , output });
+		res.status(200).json({ message: 'Success' , newId: fileName });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Server Error' });
