@@ -26,7 +26,7 @@ export const createVcardFile = async (
 		vCard.photo.embedFromString(photoBinary, photoType);
 		vCard.note = description;
 		vCard.role = year;
-		vCard.suffix = pronouns;
+		vCard.title = pronouns;
 		vCard.version = '3.0';
 		let fileName = id;
 		while (fs.existsSync(`./contacts/${fileName}.vcf`)){

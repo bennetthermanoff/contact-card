@@ -51,7 +51,7 @@ export const App = () => {
                     </div>
                     <div className="contactInfo">
                         <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1>
-                        <h3 className="contactPronouns">{`${getEntry(contact,'X-PHONETIC-FIRST-NAME')} ${getEntry(contact,'X-PHONETIC-LAST-NAME')}`}</h3>
+                        <h3 className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
                         <MajorTags contact={contact}/>                    
                     </div>
                 </div>
