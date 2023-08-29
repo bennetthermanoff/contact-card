@@ -2,3 +2,5 @@ node_modules
 *.vcf
 build
 .ds_store
+*.xlsx
+server/photos

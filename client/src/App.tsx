@@ -56,7 +56,9 @@ export const App = () => {
                     </div>
                 </div>
                 <div className="contactDescription">
-                    <p className="contactDescription">{`${getEntry(contact, 'NOTE')}`}</p>
+                    <p className="contactDescription">{//filter backslashes from entry
+                        `${getEntry(contact, 'NOTE')}`.replace(/\\/g, '')
+                    }</p>
                 </div>
                 <div className="contactButtons">
                     <DownloadButton contactId={idFromParams} />

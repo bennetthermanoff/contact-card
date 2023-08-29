@@ -11,13 +11,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tapni/vcards-js": "^1.0.6",
-    "@types/prompt": "^1.1.5",
+    "@types/prompts": "^2.4.4",
+    "@types/vcards-js": "^2.10.2",
     "express": "^4.18.2",
-    "prompt": "^1.3.0",
+    "mimetics": "^0.0.6",
+    "node-xlsx": "^0.23.0",
+    "prompts": "^2.4.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6",
-    "vcard": "github:bennetthermanoff/node-vcard"
+    "vcard": "github:bennetthermanoff/node-vcard",
+    "vcards-js": "^2.10.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
