@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": " nodemon ./index.ts",
-    "serve": "IS_PROD=true ts-node ./index.ts"
+    "serve": "IS_PROD=true ts-node ./index.ts",
+    "import": "ts-node ./importContacts.ts"
   },
   "author": "",
   "license": "ISC",

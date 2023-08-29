@@ -24,7 +24,6 @@ This allows us to make qr codes to link to contact card, as well as the website 
 ## TODO
  - [x] find contact card file and download contact card (GET /api/vcard/:contactId)
  - [x] read contact card file and return json details for frontend (GET /api/person/:contactId)
- - [ ] create contact card file (POST /api/vcard) (low priority)
- - [ ] update contact card file (PUT /api/vcard/:contactId) (extreme low priority)
- - [ ] delete contact card file (DELETE /api/vcard/:contactId) (extreme low priority)
-
+# Scripts
+ - [x] mass import from xlsx file
+   - to run: npm run import, xlsx file should be in server folder, named 'contacts.xlsx'. photos should be in server/photos folder. photo filenames should be given in a column in the xlsx file. columns will be prompted in CLI. 
