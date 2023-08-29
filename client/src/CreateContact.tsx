@@ -6,7 +6,7 @@ export const CreateContact = () => {
 
     const createContact = async () => {
         //TODO
-        await postContact(newContact);
+        // await postContact(newContact);
     };
 
     return (<div className="App">TODO Maddie</div>);
