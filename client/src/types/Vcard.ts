@@ -15,6 +15,7 @@ export type VcardJson = {
   NOTE?: VcardEntry;
   BDAY?: VcardEntry;
   IMPP?: VcardEntry;
+  ROLE?: VcardEntry;
   'X-PHONETIC-FIRST-NAME'?: VcardEntry;
   'X-PHONETIC-LAST-NAME'?: VcardEntry;
   //More of these entries can be added, idk what every vcard entry is

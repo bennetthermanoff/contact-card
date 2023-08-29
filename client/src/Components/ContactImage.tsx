@@ -19,7 +19,7 @@ export const ContactImage = ({
                 <img
                     src={`data:image/png;base64,${contact.PHOTO.value}`}
                     alt="profile"
-                    height={size}
+                    width={size}
                 />
             );
         } else {

@@ -43,6 +43,7 @@ export const App = () => {
             <div className="cardContainer">
                 <div className="rowGroup">
                     <div className="contactImage">
+                        {!isQrDisplayed ? <div className='gradeTag'>{`${getEntry(contact, 'ROLE')}`}</div> : null}
                         <ContactImage
                             contact={contact}
                             size={300}
@@ -50,14 +51,18 @@ export const App = () => {
                         />
                     </div>
                     <div className="contactInfo">
-                        <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1>
+                        <div className='rowGroup'>
+                            <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
+                        </div>
                         <h3 className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
                         <MajorTags contact={contact}/>                    
                     </div>
                 </div>
                 <div className="contactDescription">
-                    <p className="contactDescription">{//filter backslashes from entry
-                        `${getEntry(contact, 'NOTE')}`.replace(/\\/g, '')
+                    <p className="contactDescription">{//detect new lines and replace with <br>
+                        getEntry(contact, 'NOTE')?.toString().split('\\n').map((item, key) => {                            
+                            return <span key={key}>{item.replace(/\\/g,'')}<br/></span>;
+                        })
                     }</p>
                 </div>
                 <div className="contactButtons">

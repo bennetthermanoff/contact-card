@@ -13,7 +13,7 @@ const csvColumns = worksheetFromFile.data[0];
 csvColumns.forEach((column:string, index:number) => {
 	console.log(`${index}: ${column}`);
 });
-const neededColumns = ['id', 'name', 'pronouns', 'year', 'description', 'majors', 'photoName'];
+const neededColumns = ['name', 'pronouns', 'year', 'description', 'majors', 'photoName'];
 
 const promptUserForColumns = async (csvColumns:string[]):Promise<columnLookup> => {
 	const columnLookup:columnLookup = {};
@@ -83,20 +83,22 @@ promptUserForColumns(csvColumns).then((columnLookup:columnLookup) => {
 			description: undefined,
 			majors: undefined
 		};
-		for (const column of neededColumns){
-			contact[column as keyof PhotoNameContact] = worksheetFromFile.data[i][columnLookup[column]]; 
+		for (const column of neededColumns){// replace colon with unicode colon
+			contact[column as keyof PhotoNameContact] = (worksheetFromFile.data[i][columnLookup[column]]).toString().replace(':', '：');
 		}
 		contacts.push(contact);
 	}
 	console.log(contacts);
-	fs.writeFileSync('./contacts.json', JSON.stringify(contacts));
 	const photoBinaryContacts = contacts.map((contact:PhotoNameContact) => getPhotoBinary(contact));
 	Promise.all(photoBinaryContacts).then((photoBinaryContacts:PhotoBinaryContact[]) => {
 		const contactFiles = photoBinaryContacts.map((contact:PhotoBinaryContact) => createContactFile(contact));
 		console.log(contactFiles);
 		contactFiles.forEach((contactFile:string) => {
 			console.log(`Created contact file ${contactFile}.vcf`);
-		});	
+		});
+		//output json of contact ids:
+		const contactIds = contactFiles.map((contactFile:string) => contactFile.split('.')[0] + '\n');
+		fs.writeFileSync('./contactIds.json', JSON.stringify(contactIds));	
 	});
 		
 });

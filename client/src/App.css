@@ -9,6 +9,7 @@
   color: white;
   text-align: center;
 }
+
 .cardContainer {
   display: flex;
   flex-direction: column;
@@ -21,6 +22,7 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   border-radius: 25px;
 }
+
 .rowGroup {
   display: flex;
   flex-direction: row;
@@ -28,34 +30,73 @@
   justify-content: left;
   align-content: start;
 }
+
 .contactInfo {
   padding-left: 25px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start; /* Align items to the top-left */
-  gap: 0; /* Remove space between items */
+  align-items: flex-start;
+  /* Align items to the top-left */
+  gap: 0;
+  /* Remove space between items */
 }
+
 .contactName {
   font-size: 1.5em;
   font-weight: bold;
-  margin: 0; /* Remove any default margin */
+  margin: 0;
+  /* Remove any default margin */
   text-align: left;
 }
+
+.contactImage {
+  position: relative;
+}
+
+.gradeTag {
+  position: absolute;
+  left: 0px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: black;
+  padding: 0.25rem .5rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem .5rem;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 1s ease-in-out;
+  box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.8);
+  background-color: bisque;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+
+  /* support safari and firefox hover*/
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+
+}
+
 .contactPronouns {
   font-size: 1.2em;
   font-weight: bold;
-  margin: 0; /* Remove any default margin */
+  margin: 0;
+  /* Remove any default margin */
   text-align: left;
   opacity: 0.5;
 }
+
 .contactMajor {
   font-size: 1.2em;
   font-weight: bold;
-  margin: 0; /* Remove any default margin */
+  margin: 0;
+  /* Remove any default margin */
   text-align: left;
   opacity: 0.75;
 }
+
 .contactButton {
   font-size: 1.5rem;
   font-weight: 600;
@@ -69,22 +110,27 @@
   text-decoration: none;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+
   &:hover {
     transform: scale(1.04);
   }
+
   /* support safari and firefox hover*/
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
 }
+
 /* if mobile, contact details display below image */
 @media only screen and (max-width: 600px) {
   .rowGroup {
     flex-direction: column;
   }
+
   .contactInfo {
     padding-left: 0px;
     align-items: center;
   }
+
   .contactButton {
     margin: 0.5rem 0.5rem;
   }
