@@ -30,3 +30,4 @@ export const postContact = async (contact:ContactPostInput) => {
     };
     return axios.post('/api/vcard', body);
 };
+export const getAllContacts = async () => axios.get('/api/people');
