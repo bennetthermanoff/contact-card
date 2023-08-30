@@ -72,7 +72,7 @@ const getPhotoBinary = async (nameContact:PhotoNameContact):Promise<PhotoBinaryC
 
 
 promptUserForColumns(csvColumns).then((columnLookup:columnLookup) => {
-	const contacts = [];
+	const contacts:Array<PhotoNameContact> = [];
 	for (let i = 1; i < worksheetFromFile.data.length; i++){
 		const contact: PhotoNameContact = {
 			photoName: undefined,

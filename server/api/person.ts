@@ -38,6 +38,8 @@ export const getAllPeople = (req: express.Request,res: express.Response) => {
 					console.log(err);
 					res.status(500).json({ error: err });
 				} else {
+					//remove photo from json
+					delete json.PHOTO;
 					people.push(json);
 				}
 			});
