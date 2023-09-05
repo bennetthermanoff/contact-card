@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './App';
+import { PdfApp, PdfAppAll } from './Pdf';
 import { CreateContact } from './CreateContact';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -19,6 +20,16 @@ const Router = createBrowserRouter([
         element: <App />,
         errorElement: <h1>Not Found</h1>,
     },
+    {
+        path: '/pdf/:contactId',
+        element: <PdfApp />,
+        errorElement: <h1>Not Found</h1>,
+    },
+    {
+        path: '/pdf/all',
+        element: <PdfAppAll />,
+        errorElement: <h1>Not Found</h1>,
+    }
 ]);
 
 root.render(<React.StrictMode>

@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const getContactById = async (id:string) => axios.get(`/api/person/${id}`);
 
+
 interface ContactPostBase {
     name:string;
     pronouns:string;
