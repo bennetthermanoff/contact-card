@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Pdf.css';
-import { getContactById, getAllContacts } from './api/contactApi';
+import { getContactById, getAllContacts, getLastContacts } from './api/contactApi';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 import { MajorTags } from './Components/MajorTags';
@@ -75,15 +75,21 @@ export const PdfApp = () => {
     );
 };
 
-export const PdfAppAll = () => {
+export const PdfAppAll = ({ lastOnly }:{lastOnly?:boolean}) => {
     const [contacts, setContacts] = useState<VcardJson[]>([]);
     const [chunks, setChunk] = useState<Array<VcardJson[]>>([]);
     useEffect(() => {
         const load = async () => {
-            const response = await getAllContacts();
-            const contacts: VcardJson[] = response.data;
-
-            setContacts(contacts);
+            if (lastOnly){
+                const response = await getLastContacts();
+                const contacts: VcardJson[] = response.data;
+                setContacts(contacts);
+            } else {
+                const response = await getAllContacts();
+                const contacts: VcardJson[] = response.data;
+                setContacts(contacts);
+            }
+            
         };
         load();
     },[]);

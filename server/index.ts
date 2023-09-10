@@ -1,5 +1,5 @@
 import express from 'express';
-import { getPerson, getAllPeople } from './api/person';
+import { getPerson, getAllPeople, getLastPeople } from './api/person';
 import { getVcardFile } from './api/vcard';
 let PORT = 3001;
 const app = express();
@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/api/people', getAllPeople);
+app.get('/api/people/last',getLastPeople);
 app.get('/api/person/:id', getPerson);
 app.get('/api/vcard/:id', getVcardFile);
 

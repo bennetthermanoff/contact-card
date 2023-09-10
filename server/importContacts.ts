@@ -8,7 +8,8 @@ import { PhotoBinaryContact, PhotoNameContact } from './types/importContactTypes
 type columnLookup = {
     [key:string]:number;
 };
-const worksheetFromFile = xlsx.parse('./contacts.xlsx')[0];
+const fileName = process.argv[2];
+const worksheetFromFile = xlsx.parse('./' + fileName)[0];
 const csvColumns = worksheetFromFile.data[0];
 csvColumns.forEach((column:string, index:number) => {
 	console.log(`${index}: ${column}`);
@@ -93,11 +94,18 @@ promptUserForColumns(csvColumns).then((columnLookup:columnLookup) => {
 	Promise.all(photoBinaryContacts).then((photoBinaryContacts:PhotoBinaryContact[]) => {
 		const contactFiles = photoBinaryContacts.map((contact:PhotoBinaryContact) => createContactFile(contact));
 		console.log(contactFiles);
-		contactFiles.forEach((contactFile:string) => {
+		contactFiles.forEach((contactFile:string|null) => {
+			if (contactFile === null){
+				return;
+			}
 			console.log(`Created contact file ${contactFile}.vcf`);
 		});
 		//output json of contact ids:
-		const contactIds = contactFiles.map((contactFile:string) => contactFile.split('.')[0] + '\n');
+		const contactIds = contactFiles.map((contactFile:string|null) => contactFile ? contactFile.split('.')[0]  : null).filter((contactId:string|null) => contactId !== null);
+		//clear file if it exists
+		if (fs.existsSync('./contactIds.json')){
+			fs.writeFileSync('./contactIds.json', '');
+		}
 		fs.writeFileSync('./contactIds.json', JSON.stringify(contactIds));	
 	});
 		
@@ -107,7 +115,7 @@ promptUserForColumns(csvColumns).then((columnLookup:columnLookup) => {
 
 
 
-const createContactFile = (contact:PhotoBinaryContact):string => {
+const createContactFile = (contact:PhotoBinaryContact):string|null => {
 	const { name, pronouns, year, description, majors, photoBinary, photoType } = contact;
 	const id = (name as string).replace(/\s/g, '');
 	const vCard = vCardsJS();
@@ -118,9 +126,9 @@ const createContactFile = (contact:PhotoBinaryContact):string => {
 	vCard.role = year as string;
 	vCard.title = pronouns as string;
 	vCard.version = '3.0';
-	let fileName = id;
-	while (fs.existsSync(`./contacts/${fileName}.vcf`)){
-		fileName += Math.floor(Math.random() * 100);
+	const fileName = id;
+	if (fs.existsSync(`./contacts/${fileName}.vcf`)){
+		return null;
 	}
 	vCard.saveToFile(`./contacts/${fileName}.vcf`);
 	return fileName;

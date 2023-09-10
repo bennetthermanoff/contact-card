@@ -29,6 +29,11 @@ const Router = createBrowserRouter([
         path: '/pdf/all',
         element: <PdfAppAll />,
         errorElement: <h1>Not Found</h1>,
+    },
+    {
+        path: '/pdf/last',
+        element: <PdfAppAll lastOnly={true} />,
+        errorElement: <h1>Not Found</h1>,
     }
 ]);
 
