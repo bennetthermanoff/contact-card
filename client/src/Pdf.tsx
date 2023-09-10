@@ -57,7 +57,7 @@ export const PdfApp = () => {
                             size={200}
                             isQrDisplayed={true}
                             pdf={true}
-                            id={contact.id}
+                            id={idFromParams}
                         />
                     </div>
                     <div className="pdf-contactInfo">
