@@ -1,14 +1,16 @@
 .major-tag {
-  font-size: 1em;
+  font-size: 1.2em;
   font-weight: 600;
   color: black;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.5rem;
   border-radius: 0.5rem;
-  margin: min(0.5rem, 0.2em) 0.1rem;
+  /* margin: min(0.5rem, 0.2em) 0.1rem; */
+  /* border: 1px solid black; */
+  text-decoration: underline;
   display: inline-block;
-  text-decoration: none;
+  /* text-decoration: none; */
   transition: all 1s ease-in-out;
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2); */
   &:hover {
     transform: scale(1.04);
   }

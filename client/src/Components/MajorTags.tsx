@@ -3,7 +3,7 @@ import './MajorTags.css';
 export const MajorTags = ({ contact }:{contact:VcardJson})=>{
     const rawMajors = getEntry(contact, 'ORG') as string;
     //split by , & and
-    const majors = rawMajors ? rawMajors.split(/,|&|and/) : [];
+    const majors = rawMajors ? rawMajors.split(/,|&/) : [];
     //change colors every 5 seconds
     return (
         <div className="major-tags">

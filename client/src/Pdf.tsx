@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import axios from 'axios';
 import { getContactById, getAllContacts } from './api/contactApi';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
@@ -108,16 +107,17 @@ export const PdfAppAll = () => {
                                             <div className="contactImage">
                                                 <ContactImage
                                                     contact={contact}
-                                                    size={160}
+                                                    size={220}
                                                     isQrDisplayed={true}
                                                 />
                                             </div>
-                                            <div className="pdf-contactInfo">
+                                            <div className="pdf-contactInfo" >
                                                 <div className='rowGroup'>
-                                                    <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
+                                                    <h1 id="pdf-name" className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
                                                 </div>
-                                                <h3 className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
-                                                <MajorTags contact={contact}/>                 
+                                                <h3 id="pdf-pronouns" className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
+                                                <MajorTags contact={contact}/>
+                                                <div className="gradeTag-Pdf">{`${getEntry(contact, 'ROLE')}`}</div>                 
                                             </div>
                     
                                         </div>

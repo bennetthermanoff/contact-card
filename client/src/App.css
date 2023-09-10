@@ -10,8 +10,8 @@
   text-align: center;
 }
 .PdfApp {
-  height: 200px;
-  width: 330px;
+  height: 2in;
+  width: 3.8in;
   position: relative;
   left: 100px;
   min-height: 100vh;
@@ -24,8 +24,8 @@
   text-align: center;
 }
 .PdfApp-Total {
-  height: 200px;
-  width: 330px;
+  height: 2in;
+  width: 3.8in;
   position: relative;
 
   align-items: center;
@@ -97,6 +97,9 @@
   /* Remove any default margin */
   text-align: left;
 }
+#pdf-name {
+  font-size: 2.5em;
+}
 
 .contactImage {
   position: relative;
@@ -125,6 +128,22 @@
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
 }
+.gradeTag-Pdf {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: black;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0.5rem;
+  display: inline-block;
+  text-decoration: none;
+  /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.8); */
+  background-color: bisque;
+  border: 1px solid gray;
+}
 
 .contactPronouns {
   font-size: 1.2em;
@@ -133,6 +152,10 @@
   /* Remove any default margin */
   text-align: left;
   opacity: 0.5;
+}
+
+#pdf-pronouns {
+  font-size: 2em;
 }
 
 .contactMajor {
