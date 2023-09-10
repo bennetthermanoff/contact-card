@@ -4,3 +4,4 @@ build
 .ds_store
 *.xlsx
 server/photos
+contactIds.json
