@@ -59,10 +59,8 @@ export const getLastPeople = (req: express.Request,res: express.Response) => {
 		const files = fs.readdirSync('./contacts');
 		const lastIdFile = fs.readFileSync('./contactIds.json', 'utf8');
 		const lastIds:string[] = JSON.parse(lastIdFile);
-		console.log(lastIds);
 		for (const file of files) {
 			if (lastIds.includes(file.split('.')[0])){
-				console.log(file.split('.')[0]);
 				const readFile = fs.readFileSync(`./contacts/${file}`, 'utf8');
 				card.readData(readFile, (err: any, json: any) => {
 					if (err) {
