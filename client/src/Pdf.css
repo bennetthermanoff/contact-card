@@ -1,0 +1,147 @@
+.PdfApp {
+  height: 2in;
+  width: 3.8in;
+  position: relative;
+  left: 100px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+
+  text-align: center;
+}
+
+.PdfApp-Total {
+  height: 2in;
+  width: 3.8in;
+  position: relative;
+
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+
+  text-align: center;
+  margin-left: 0.25in;
+}
+
+.Pdf-Page-Container {
+  display: grid;
+  grid-template-columns: 4in 4in;
+  /* grid-column-gap: 0.25in; */
+  /* border: 1px solid black; */
+  margin-top: 0.25in;
+}
+
+.Pdf-Container {
+  display: grid;
+  grid-template-rows: 10.5in;
+  /* grid-gap: 0.25in; */
+  /* margin-top: 0.25in; */
+}
+
+.rowGroup {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: left;
+  align-content: start;
+}
+
+
+.pdf-contactInfo {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* Align items to the top-left */
+  gap: 0;
+  /* Remove space between items */
+}
+
+.contactName {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+  /* Remove any default margin */
+  text-align: left;
+}
+
+#pdf-name {
+  font-size: 2.5em;
+}
+
+.contactImage {
+  position: relative;
+  padding-right: 10px;
+
+}
+
+.gradeTag-Pdf {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: black;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0.5rem;
+  display: inline-block;
+  text-decoration: none;
+  /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.8); */
+  background-color: bisque;
+  border: 1px solid gray;
+}
+
+.contactPronouns {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  /* Remove any default margin */
+  text-align: left;
+  opacity: 0.5;
+}
+
+#pdf-pronouns {
+  font-size: 2em;
+}
+
+.major-tags-pdf {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+
+.contactMajor {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  /* Remove any default margin */
+  text-align: left;
+  opacity: 0.75;
+}
+
+/* if mobile, contact details display below image */
+@media only screen and (max-width: 600px) {
+  .rowGroup {
+    flex-direction: column;
+  }
+
+  .contactInfo {
+    padding-left: 0px;
+    margin-left: 0px;
+    align-items: center;
+  }
+
+  .contactButton {
+    margin: 0.5rem 0.5rem;
+  }
+}
+
+.App-link {
+  color: #61dafb;
+}

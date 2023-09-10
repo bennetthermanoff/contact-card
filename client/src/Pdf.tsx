@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './Pdf.css';
 import { getContactById, getAllContacts } from './api/contactApi';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
@@ -56,6 +56,7 @@ export const PdfApp = () => {
                             contact={contact}
                             size={200}
                             isQrDisplayed={true}
+                            pdf={true}
                         />
                     </div>
                     <div className="pdf-contactInfo">
@@ -63,7 +64,7 @@ export const PdfApp = () => {
                             <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
                         </div>
                         <h3 className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
-                        <MajorTags contact={contact}/>                 
+                        <MajorTags contact={contact} pdf={true}/>                 
                     </div>
                     
                 </div>
@@ -107,8 +108,9 @@ export const PdfAppAll = () => {
                                             <div className="contactImage">
                                                 <ContactImage
                                                     contact={contact}
-                                                    size={220}
+                                                    size={180}
                                                     isQrDisplayed={true}
+                                                    pdf={true}
                                                 />
                                             </div>
                                             <div className="pdf-contactInfo" >
@@ -116,7 +118,7 @@ export const PdfAppAll = () => {
                                                     <h1 id="pdf-name" className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
                                                 </div>
                                                 <h3 id="pdf-pronouns" className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
-                                                <MajorTags contact={contact}/>
+                                                <MajorTags contact={contact} pdf={true}/>        
                                                 <div className="gradeTag-Pdf">{`${getEntry(contact, 'ROLE')}`}</div>                 
                                             </div>
                     

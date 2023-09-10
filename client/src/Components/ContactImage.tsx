@@ -6,13 +6,15 @@ export const ContactImage = ({
     contact,
     isQrDisplayed,
     size,
+    pdf
 }: {
   contact: VcardJson;
   isQrDisplayed: boolean;
   size: number;
+  pdf?: boolean;
 }) => {
     if (isQrDisplayed) {
-        return <QR size={size} />;
+        return <QR size={size} pdf={pdf} />;
     } else {
         if (contact.PHOTO) {
             return (
@@ -20,6 +22,7 @@ export const ContactImage = ({
                     src={`data:image/png;base64,${contact.PHOTO.value}`}
                     alt="profile"
                     width={size}
+
                 />
             );
         } else {
