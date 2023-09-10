@@ -1,6 +1,6 @@
 import { QRCodeSVG } from 'qrcode.react';
 
-export const QR = ({ size, pdf }: { size: number, pdf?:boolean }) => {
+export const QR = ({ size, pdf, overrideURL }: { size: number, pdf?:boolean, overrideURL?:string }) => {
     const url = window.location.href;
-    return <QRCodeSVG value={url} size={size} includeMargin={!pdf} />;
+    return <QRCodeSVG value={!pdf ? url : overrideURL as string} size={size} includeMargin={!pdf} />;
 };

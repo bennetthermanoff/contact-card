@@ -6,15 +6,17 @@ export const ContactImage = ({
     contact,
     isQrDisplayed,
     size,
-    pdf
+    pdf,
+    id
 }: {
   contact: VcardJson;
   isQrDisplayed: boolean;
   size: number;
   pdf?: boolean;
+  id?:string;
 }) => {
     if (isQrDisplayed) {
-        return <QR size={size} pdf={pdf} />;
+        return <QR size={size} pdf={pdf} overrideURL={!pdf ? undefined : 'https://contacts.hermanoff.dev/contact/' + id} />;
     } else {
         if (contact.PHOTO) {
             return (

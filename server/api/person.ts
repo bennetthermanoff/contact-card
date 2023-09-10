@@ -40,6 +40,8 @@ export const getAllPeople = (req: express.Request,res: express.Response) => {
 				} else {
 					//remove photo from json
 					delete json.PHOTO;
+					//add id to json, id has no spaces
+					json.id = file.split('.')[0].replace(/\s/g, '');
 					people.push(json);
 				}
 			});

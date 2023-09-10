@@ -1,4 +1,5 @@
 export type VcardJson = {
+  id?: string;
   REV?: VcardEntry;
   FN?: VcardEntry;
   N?: VcardEntry;
