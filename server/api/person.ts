@@ -26,7 +26,6 @@ export const getPersonFromVcard = (id: string, res: express.Response) => {
 			}
 		});
 	} catch (err) {
-		console.log(err);
 		res.status(500).json({ error: err });
 	}
 };
