@@ -23,8 +23,6 @@ export const getPersonFromVcard = (id: string, res: express.Response) => {
 					fs.writeFileSync('./log.txt', '');
 				}
 				fs.appendFileSync( './log.txt', `${new Date().toISOString()}, ${id} \n`);	
-				
-
 			}
 		});
 	} catch (err) {
