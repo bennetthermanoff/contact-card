@@ -9,5 +9,13 @@ export const CreateContact = () => {
         // await postContact(newContact);
     };
 
-    return (<div className="App">TODO Maddie</div>);
+    return (
+        <div className="App">
+            <p>View a contact at /contact/:id or print a contact at /pdf/:id</p>
+            <button onClick={()=>(window.location.href = 'https://hermanoff.dev')}>
+                Go to hermanoff.dev (my website)
+            </button>
+        </div>
+        
+    );
 };
