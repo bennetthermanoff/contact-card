@@ -5,3 +5,5 @@ build
 *.xlsx
 server/photos
 contactIds.json
+logs
+log.txt

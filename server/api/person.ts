@@ -19,6 +19,12 @@ export const getPersonFromVcard = (id: string, res: express.Response) => {
 				res.status(500).json({ error: err });
 			} else {
 				res.status(200).json(json);
+				if (fs.existsSync('./log.txt') === false){
+					fs.writeFileSync('./log.txt', '');
+				}
+				fs.appendFileSync( './log.txt', `${new Date().toISOString()}, ${id} \n`);	
+				
+
 			}
 		});
 	} catch (err) {
