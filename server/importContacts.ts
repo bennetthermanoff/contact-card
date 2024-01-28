@@ -127,9 +127,9 @@ const createContactFile = (contact:PhotoBinaryContact):string|null => {
 	vCard.title = pronouns as string;
 	vCard.version = '3.0';
 	const fileName = id;
-	// if (fs.existsSync(`./contacts/${fileName}.vcf`)){
-	// 	return null;
-	// }
+	if (fs.existsSync(`./contacts/${fileName}.vcf`)){
+		return null;
+	}
 	vCard.saveToFile(`./contacts/${fileName}.vcf`);
 	return fileName;
 };
