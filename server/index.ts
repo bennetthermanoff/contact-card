@@ -1,17 +1,25 @@
 import express from 'express';
-import { getPerson, getAllPeople } from './api/person';
-import { getVcardFile } from './api/vcard';
+import multer from 'multer';
+
+
 let PORT = 3001;
 const app = express();
 import path from 'path';
+import { useContactRoutes } from './api/contacts';
+import { useEventRoutes } from './api/events';
+
+const upload = multer({ dest: './uploads/' });
+
 
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: false }));
+useContactRoutes(app, upload);
+useEventRoutes(app, upload);
+//set upload limit to 1gb
+app.use(express.json({ limit: '1gb' }));
+app.use(express.urlencoded({ limit: '1gb', extended: true }));
 
-app.get('/api/people', getAllPeople);
-app.get('/api/person/:id', getPerson);
-app.get('/api/vcard/:id', getVcardFile);
+
 
 if (process.env.IS_PROD) {
 	if (process.pid) {
