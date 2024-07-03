@@ -8,7 +8,16 @@ import path from 'path';
 import { useContactRoutes } from './api/contacts';
 import { useEventRoutes } from './api/events';
 
-const upload = multer({ dest: './uploads/' });
+const storage = multer.memoryStorage();
+const filter = (req: any, file: any, cb: any) => {
+	//only images, including newer formats
+	if (file.mimetype.startsWith('image')) {
+		cb(null, true);
+	} else {
+		cb(new Error('Invalid file type'), false);
+	}
+};
+const upload = multer({ storage, fileFilter: filter });
 
 
 app.use(express.json());

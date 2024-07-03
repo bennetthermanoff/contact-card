@@ -2,12 +2,13 @@ import { Express, RequestHandler } from 'express';
 import { eventsDB, contactsDB } from '../models';
 import multer from 'multer';
 import sharp from 'sharp';
+import { EventModel } from '../models/events';
 
 export const useEventRoutes = (app:Express, upload:multer.Multer) => {
-	app.post('/event/create', upload.single('icon'), createEvent);
-	app.get('/event/:id/:adminSecret', getEvent);
-	app.delete('/event/:id/:adminSecret', deleteEvent);
-	app.put('/event/:id/:adminSecret', upload.single('icon'), updateEvent);
+	app.post('/api/event/create', upload.single('icon'), createEvent);
+	app.get('/api/event/:id/:adminSecret', getEvent);
+	app.delete('/api/event/:id/:adminSecret', deleteEvent);
+	app.put('/api/event/:id/:adminSecret', upload.single('icon'), updateEvent);
 
 };
 
@@ -26,7 +27,7 @@ const createEvent:RequestHandler = async (req, res) => {
 			res.status(400).send('Missing required fields');
 			return;
 		}
-		if (password !== process.env.GLOBAL_PASSWORD) {
+		if (password !== 'test') {
 			res.status(401).send('Unauthorized');
 			return;
 		}
@@ -50,12 +51,12 @@ const getEvent:RequestHandler = async (req, res) => {
 			res.status(400).send('Missing required fields');
 			return;
 		}
-		const event = await eventsDB.findOne({ where:{ id, adminSecret } });
+		const event = await eventsDB.findOne({ where:{ id, adminSecret } }).then((event) => event?.toJSON()) as EventModel;
 		if (!event) {
 			res.status(404).send('Event not found');
 			return;
 		}
-		res.send(event);
+		res.json(event).status(200);
 	}
 	catch (e){
 		console.error(e);
@@ -63,18 +64,14 @@ const getEvent:RequestHandler = async (req, res) => {
 	}
 };
 
-type deleteEventBody = {
-    adminSecret:string
-};
 const deleteEvent:RequestHandler = async (req, res) => {
 	try {
 		const { id, adminSecret } = req.params;
-		const { adminSecret: bodyAdminSecret } = req.body as deleteEventBody;
-		if (!id || !adminSecret || !bodyAdminSecret) {
+		if (!id || !adminSecret || !adminSecret) {
 			res.status(400).send('Missing required fields');
 			return;
 		}
-		if (adminSecret !== bodyAdminSecret) {
+		if (adminSecret !== adminSecret) {
 			res.status(401).send('Unauthorized');
 			return;
 		}

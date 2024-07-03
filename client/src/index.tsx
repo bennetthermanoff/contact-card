@@ -3,33 +3,55 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './App';
 import { PdfApp, PdfAppAll } from './Pdf';
-import { CreateContact } from './CreateContact';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { CreateEvent } from './pages/CreateEvent';
+import { ManageEvent } from './pages/ManageEvent';
+import { EditContact } from './pages/EditContact';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement,);
 
 const Router = createBrowserRouter([
     {
         path: '/',
-        element: <CreateContact />,
+        element: <CreateEvent />,
         errorElement: <h1>Not Found</h1>,
     },
     {
-        path: '/contact/:contactId',
+        path: '/event/:eventId/manage/:adminSecret',
+        element: <ManageEvent />,
+        errorElement: <h1>Not Found</h1>,
+    },
+    {
+        path: '/event/:eventId/contact/:contactId',
         element: <App />,
         errorElement: <h1>Not Found</h1>,
     },
     {
-        path: '/pdf/:contactId',
+        path: '/event/:eventId/pdf/',
         element: <PdfApp />,
         errorElement: <h1>Not Found</h1>,
     },
     {
-        path: '/pdf/all',
-        element: <PdfAppAll />,
+        path: '/event/:eventId/:registrationSecret/editContact/:contactId',
+        element: <EditContact />,
         errorElement: <h1>Not Found</h1>,
-    }
+    },
+    // {
+    //     path: '/contact/:contactId',
+    //     element: <App />,
+    //     errorElement: <h1>Not Found</h1>,
+    // },
+    // {
+    //     path: '/pdf/:contactId',
+    //     element: <PdfApp />,
+    //     errorElement: <h1>Not Found</h1>,
+    // },
+    // {
+    //     path: '/pdf/all',
+    //     element: <PdfAppAll />,
+    //     errorElement: <h1>Not Found</h1>,
+    // }
 ]);
 
 root.render(<React.StrictMode>

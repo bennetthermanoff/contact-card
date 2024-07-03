@@ -5,7 +5,7 @@ import vcard from 'vcard';
 import multer from 'multer';
 import sharp from 'sharp';
 import { ContactModel } from '../models/contacts';
-import { getEntry } from '../types/Vcard';
+import { getEntry } from '../types/vcardjson';
 import xlsx from 'node-xlsx';
 import { PhotoBinaryContact, PhotoNameContact } from '../types/importContactTypes';
 import { EventModel } from '../models/events';
