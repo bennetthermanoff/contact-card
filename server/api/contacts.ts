@@ -13,13 +13,13 @@ import { EventModel } from '../models/events';
 
 const MAX_CONTACT_UPLOAD = 200;
 export const useContactRoutes = (app:Express, upload:multer.Multer):void => {
-	app.get('/contacts/single/:id', getContact);
-	app.get('/contacts/', getAllContacts);
-	app.get('/contacts/pdf', getAllContactsPdf);
-	app.post('/contacts/single', upload.single('photo'), createContact);
-	app.put('/contacts/:id', upload.single('photo'), updateContact);
-	app.post('/contacts/delete/:id', deleteContact);
-	app.post('/contacts/', upload.fields([{ name:'photos', maxCount:MAX_CONTACT_UPLOAD },{ name:'xlsx', maxCount:1 }]), createContacts);
+	app.get('/api/contacts/single/:id', getContact);
+	app.get('/api/contacts/', getAllContacts);
+	app.get('/api/contacts/pdf', getAllContactsPdf);
+	app.post('/api/contacts/single', upload.single('photo'), createContact);
+	app.put('/api/contacts/:id', upload.single('photo'), updateContact);
+	app.post('/api/contacts/delete/:id', deleteContact);
+	app.post('/api/contacts/', upload.fields([{ name:'photos', maxCount:MAX_CONTACT_UPLOAD },{ name:'xlsx', maxCount:1 }]), createContacts);
 };
 
 
@@ -58,7 +58,7 @@ const createContact:RequestHandler = async (req, res) => {
 		vCard.version = '3.0';
 		const vCardString = vCard.getFormattedString();
         
-		const contact = await contactsDB.create({ vcard, eventId });
+		const contact = await contactsDB.create({ vcard:vCardString, eventId });
 		res.status(201).send(contact);
 	}
 	catch (e){

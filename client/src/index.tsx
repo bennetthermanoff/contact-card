@@ -33,10 +33,15 @@ const Router = createBrowserRouter([
         errorElement: <h1>Not Found</h1>,
     },
     {
-        path: '/event/:eventId/:registrationSecret/editContact/:contactId',
-        element: <EditContact />,
+        path: '/event/:eventId/:secret/create/new',
+        element: <EditContact isNew ={true}/>,
         errorElement: <h1>Not Found</h1>,
     },
+    {
+        path: '/event/:eventId/:secret/edit/:contactId',
+        element: <EditContact isNew={false} />,
+        errorElement: <h1>Not Found</h1>,
+    }
     // {
     //     path: '/contact/:contactId',
     //     element: <App />,

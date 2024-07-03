@@ -109,8 +109,8 @@ export const ManageEvent = () => {
                 </div>
                 <div className='copyableLink'>
                     <h3>Registration Link</h3>
-                    <input type='text' value={`${window.location.origin}/event/${eventId}/${event?.registerSecret}/editContact/new`} readOnly />
-                    <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/event/${eventId}/editContact/${event?.registerSecret}`)}>Copy</button>
+                    <input type='text' value={`${window.location.origin}/event/${eventId}/${event?.registerSecret}/create/new`} readOnly />
+                    <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/event/${eventId}/${event?.registerSecret}/create/new`)}>Copy</button>
                 </div>
             </div>
             <div className='eventContacts' style={{ backgroundColor:event?.secondaryColor }}>
