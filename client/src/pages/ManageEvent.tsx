@@ -283,7 +283,11 @@ export const ManageEvent = () => {
                         {contacts.map((contact) => 
                             <div style={{ border:'solid 2px grey', }}>
                                 <input type='checkbox' checked={contact.selected} onChange={() => { contact.selected = !contact.selected; setContacts([...contacts]); }}  style={{ margin:5, width:20, height:20 }}/>
-                                <ContactCard key={contact.id} contact={contact} selected={contact.selected} />
+                                <div style={{ padding:0, margin:0, cursor:'pointer' }} 
+                                    role='button' 
+                                    onClick={() => {window.location.href = `${window.location.origin }/event/${eventId}/contact/${contact.id}`;}}>
+                                    <ContactCard key={contact.id} contact={contact} selected={contact.selected} />
+                                </div>
                                 <button className='editButton' onClick={() => {window.location.href = `${window.location.origin }/event/${eventId}/${event?.adminSecret}/edit/${contact.id}`;}}>Edit Contact</button>
                             </div>)}
                     </div>
