@@ -9,16 +9,17 @@ import { getEntry } from '../types/vcardjson';
 import xlsx from 'node-xlsx';
 import { PhotoBinaryContact, PhotoNameContact } from '../types/importContactTypes';
 import { EventModel } from '../models/events';
+import { Op } from 'sequelize';
 
 
-const MAX_CONTACT_UPLOAD = 200;
+const MAX_CONTACT_UPLOAD = 500;
 export const useContactRoutes = (app:Express, upload:multer.Multer):void => {
 	app.get('/api/contacts/single/:id', getContact);
-	app.get('/api/contacts/', getAllContacts);
-	app.get('/api/contacts/pdf', getAllContactsPdf);
+	app.get('/api/contacts/all/:eventId/:adminSecret', getAllContacts);
+	app.get('/api/contacts/pdf/:eventId/:adminSecret', getAllContactsPdf);
 	app.post('/api/contacts/single', upload.single('photo'), createContact);
 	app.put('/api/contacts/:id', upload.single('photo'), updateContact);
-	app.post('/api/contacts/delete/:id', deleteContact);
+	app.post('/api/contacts/delete/', deleteContact);
 	app.post('/api/contacts/', upload.fields([{ name:'photos', maxCount:MAX_CONTACT_UPLOAD },{ name:'xlsx', maxCount:1 }]), createContacts);
 };
 
@@ -46,7 +47,7 @@ const createContact:RequestHandler = async (req, res) => {
 			res.status(401).send('Unauthorized');
 			return;
 		}
-		const photoBuffer = photo ? await sharp(photo.buffer).jpeg().resize(512,512).toBuffer() : null;
+		const photoBuffer = photo ? await sharp(photo.buffer).jpeg().resize(512,512).withMetadata().toBuffer() : null;
 		const photoURI = photoBuffer ? photoBuffer.toString('base64') : null;
 		const vCard = vCardsJS();
 		vCard.firstName = name;
@@ -87,7 +88,13 @@ const getContact:RequestHandler = async (req, res) => {
 };
 const getAllContacts:RequestHandler = async (req, res) => {
 	const card = new vcard();
-	const contacts = await contactsDB.findAll().then((contacts) => contacts.map((contact) => contact.toJSON() as ContactModel));
+	const { eventId, adminSecret } = req.params;
+	const event = await eventsDB.findOne({ where:{ id:eventId, adminSecret } }).then((event) => event?.toJSON() as EventModel);
+	if (!event) {
+		res.status(401).send('Unauthorized');
+		return;
+	}
+	const contacts = await contactsDB.findAll({ where:{ eventId } }).then((contacts) => contacts.map((contact) => contact.toJSON() as ContactModel));
 	const people: any[] = [];
 	for (const contact of contacts) {
 		card.readData(contact.vcard, (err: any, json: any) => {
@@ -106,6 +113,12 @@ const getAllContacts:RequestHandler = async (req, res) => {
 
 const getAllContactsPdf:RequestHandler = async (req, res) => {
 	const card = new vcard();
+	const { eventId , adminSecret } = req.params;
+	const event = await eventsDB.findOne({ where:{ id:eventId, adminSecret } }).then((event) => event?.toJSON() as EventModel);
+	if (!event) {
+		res.status(401).send('Unauthorized');
+		return;
+	}
 	const contacts = await contactsDB.findAll().then((contacts) => contacts.map((contact) => contact.toJSON() as ContactModel));
 	const people: any[] = [];
 	for (const contact of contacts) {
@@ -125,6 +138,17 @@ const getAllContactsPdf:RequestHandler = async (req, res) => {
 	res.status(200).json(people);
 };
 
+const extractPhotoBase64 = (vcardText:string)=> {
+	const regex = /PHOTO;.*?:(.*?)(?=\n)/s;
+	const match = vcardText.match(regex);
+  
+	if (match && match[1]) {
+		return match[1];
+	}
+  
+	return null;
+};
+
 type updateContactBody = {
     name?:string,
     pronouns?:string,
@@ -138,6 +162,7 @@ const updateContact:RequestHandler = async (req, res) => {
 	const { id } = req.params;
 	const { name, pronouns, role, tags, note, eventId, adminSecret } = req.body as updateContactBody;
 	const photo = req.file;
+	
 
 	try {
 		if (!id || !adminSecret) {
@@ -149,12 +174,20 @@ const updateContact:RequestHandler = async (req, res) => {
 			res.status(404).send('Contact not found');
 			return;
 		}
+		const event = await eventsDB.findOne({ where:{ id:eventId, adminSecret } }).then((event) => event?.toJSON() as EventModel);
+		if (!event) {
+			res.status(401).send('Unauthorized');
+			return;
+		}
+
 		if (contact.eventId !== eventId) {
 			res.status(401).send('Unauthorized');
 			return;
 		}
-		const photoBuffer = photo ? await sharp(photo.buffer).jpeg().resize(512,512).toBuffer() : null;
-		const photoURI = photoBuffer ? photoBuffer.toString('base64') : null;
+		const oldPhoto = extractPhotoBase64(contact.vcard);
+
+		const photoBuffer = photo ? await sharp(photo.buffer).jpeg().resize(512,512).withMetadata().toBuffer() : null;
+		const photoURI = photoBuffer ? photoBuffer.toString('base64') : oldPhoto;
 		const vCard = vCardsJS();
 		vCard.firstName = name ? name : getEntry(contact, 'FN') as string;
 		vCard.organization = tags ? tags : getEntry(contact, 'ORG') as string;
@@ -175,20 +208,19 @@ const updateContact:RequestHandler = async (req, res) => {
 };
 
 const deleteContact:RequestHandler = async (req, res) => {
-	const { id } = req.params;
-	const { adminSecret } = req.body as { adminSecret:string };
+	const { adminSecret, ids } = req.body as { adminSecret:string, ids:string[] };
 	try {
-		if (!id || !adminSecret) {
+		if (!ids || !adminSecret) {
 			res.status(400).send('Missing required fields');
 			return;
 		}
-		const contact = await contactsDB.findOne({ where:{ id, adminSecret } });
-		if (!contact) {
-			res.status(404).send('Contact not found');
+		const event = await eventsDB.findOne({ where:{ adminSecret } }).then((event) => event?.toJSON() as EventModel);
+		if (!event) {
+			res.status(401).send('Unauthorized');
 			return;
 		}
-		await contact.destroy();
-		res.send('Contact deleted');
+		await contactsDB.destroy({ where:{ id:ids, eventId:event.id } });
+		res.send('Contacts deleted');
 	}
 	catch (e){
 		console.error(e);
@@ -196,25 +228,30 @@ const deleteContact:RequestHandler = async (req, res) => {
 	}
 };
 
+type cell = {id:number,name:string};
 type createContactsBody = {
     columnLookup:{
-		photoName:number,
-		id:number,
-		name:number,
-		pronouns:number,
-		year:number,
-		description:number,
-		majors:number
+		photoName:cell,
+		name:cell,
+		pronouns:cell,
+		year:cell,
+		description:cell,
+		majors:cell
 	}
     eventId:string,
     adminSecret:string,
 };
 const createContacts:RequestHandler = async (req, res) => {
-	const { columnLookup, adminSecret, eventId } = req.body as createContactsBody;
+	const { columnLookup, adminSecret, eventId } = JSON.parse(req.body.body) as createContactsBody;
 	const contacts:Array<PhotoNameContact> = [];
+	
+	
 	const { photos, xlsx: xlsxFile } = req.files as { photos:Express.Multer.File[], xlsx:Express.Multer.File[] };
+	console.log(req.files);
 	try {
-		if (!columnLookup || !adminSecret || !eventId || !xlsxFile) {
+		if (!columnLookup || !adminSecret || !eventId ) {
+			console.log({ columnLookup, adminSecret, eventId });
+			
 			res.status(400).send('Missing required fields');
 			return;
 		}
@@ -235,12 +272,14 @@ const createContacts:RequestHandler = async (req, res) => {
 				description: undefined,
 				majors: undefined
 			};
-			for (const column of Object.keys(columnLookup)){// replace colon with unicode colon
-				let data = worksheetFromFile.data[i][columnLookup[column as keyof PhotoNameContact]];
-				if (columnLookup[column as keyof PhotoNameContact] === -1 || data === undefined){
-					data = '';
+			const row = worksheetFromFile.data[i];
+			for (const [key, value] of Object.entries(columnLookup)){
+				if (value.id === -1){
+					continue;
 				}
-				contact[column as keyof PhotoNameContact] = data;
+				//replace semicolon with lookalike
+				const field:string = row[value.id];
+				contact[key as keyof PhotoNameContact] = field;
 			}
 			contacts.push(contact);
 		}
@@ -265,13 +304,13 @@ const createContacts:RequestHandler = async (req, res) => {
 				console.log(`Photo ${photoName} does not exist`);
 				return photoBinaryContact;
 			}
-			const photoBuffer = await sharp(photo.buffer).jpeg().resize(512,512).toBuffer();
+			const photoBuffer = await sharp(photo.buffer).jpeg().resize(512,512).withMetadata().toBuffer();
 			photoBinaryContact.photoBinary = photoBuffer.toString('base64');
 			photoBinaryContact.photoType = 'image/jpeg';
 			return photoBinaryContact;
 
 		})).then((photoBinaryContacts:PhotoBinaryContact[]) => {
-			Promise.all(photoBinaryContacts.map((contact:PhotoBinaryContact) => {
+			Promise.all(photoBinaryContacts.map(async(contact:PhotoBinaryContact) => {
 				const vCard = vCardsJS();
 				vCard.firstName = contact.name as string;
 				vCard.organization = contact.majors as string;
@@ -281,7 +320,17 @@ const createContacts:RequestHandler = async (req, res) => {
 				vCard.title = contact.pronouns as string;
 				vCard.version = '3.0';
 				const vCardString = vCard.getFormattedString();
-				return contactsDB.create({ vcard:vCardString, eventId });
+				//check if contact already exists
+				const existingContact = await contactsDB.findOne({ where:{ 
+					vcard:{
+						[Op.like]:`%FN;CHARSET=UTF-8:${contact.name}%`
+					},
+					eventId
+				} }).then((contact) => contact?.toJSON() as ContactModel);
+				const contactAlreadyExists = existingContact !== undefined;
+				if (!contactAlreadyExists){
+					return contactsDB.create({ vcard:vCardString, eventId });
+				}
 			})).then(() => {
 				res.send('Contacts created');
 			});

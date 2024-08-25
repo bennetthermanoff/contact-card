@@ -7,13 +7,19 @@ const app = express();
 import path from 'path';
 import { useContactRoutes } from './api/contacts';
 import { useEventRoutes } from './api/events';
+import { log } from 'console';
 
 const storage = multer.memoryStorage();
 const filter = (req: any, file: any, cb: any) => {
-	//only images, including newer formats
-	if (file.mimetype.startsWith('image')) {
+	//only images, including newer formats and xlsx
+	const ext = path.extname(file.originalname);
+
+	if (file.mimetype.startsWith('image') || 
+	file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	|| ext === '.HEIF' || ext === '.HEIC' || ext === '.heif' || ext === '.heic') {
 		cb(null, true);
 	} else {
+		console.log(file);
 		cb(new Error('Invalid file type'), false);
 	}
 };

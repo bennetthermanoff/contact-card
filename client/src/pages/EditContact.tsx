@@ -43,7 +43,7 @@ export const EditContact = ({ isNew }:{isNew:boolean}) => {
     };
     const handleSave = async () => {
         if (isNew && secret && eventId &&
-            window.confirm('Are you sure you want to submit this contact? Contact cannot be updated afterwards.')
+            window.confirm('Are you sure you want to submit this contact?')
         ){
             const formData = new FormData();
             formData.append('name', updatedContact.name);

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import  '../css/manageEvent.css';
 import { read, utils } from 'xlsx';
+import { VcardJson, getEntry } from '../types/Vcard';
+import { ContactImage } from '../Components/ContactImage';
 
 type Event = {
     id:string,
@@ -13,6 +15,8 @@ type Event = {
     primaryColor:string,
     secondaryColor:string
 };
+type cell = {id:number,name:string}
+
 
 export const ManageEvent = () => {
 
@@ -76,23 +80,22 @@ export const ManageEvent = () => {
     //upload
     const [xlsx, setXlsx] = useState<File|null>(null);
     const [photos, setPhotos] = useState<FileList|null>(null);
-    const [uploadedColumns, setUploadedColumns] = useState<Array<string>>([]);
+    const [uploadedColumns, setUploadedColumns] = useState<Array<cell>>([]);
+    
     const [columnLookup, setColumnLookup] = useState<{
-        photoName:string,
-        id:string,
-        name:string,
-        pronouns:string,
-        year:string,
-        description:string,
-        majors:string
+        photoName:cell,
+        name:cell,
+        pronouns:cell,
+        year:cell,
+        description:cell,
+        majors:cell,
     }>({
-        photoName: 'NULL',
-        id: 'NULL',
-        name: 'NULL',
-        pronouns: 'NULL',
-        year: 'NULL',
-        description: 'NULL',
-        majors: 'NULL'
+        photoName: { id:-1,name:'NULL' },
+        name: { id:-1,name:'NULL' },
+        pronouns: { id:-1,name:'NULL' },
+        year: { id:-1,name:'NULL' },
+        description: { id:-1,name:'NULL' },
+        majors: { id:-1,name:'NULL' },
     });
     
     const handleXlsxChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -105,18 +108,17 @@ export const ManageEvent = () => {
         reader.onload = (e:ProgressEvent<FileReader>) => {
             const data = e.target?.result;
             const workbook = read(data, { type: 'array' });
-            const columns:Array<string> = ['NULL'];
+            const columns:Array<cell> = [{ id:-1,name:'NULL' }];
             const sheet1 = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]],{ header:1 }) as any[][];
             if (sheet1.length > 0){
-                const firstRow = sheet1[0];
+                const firstRow:Array<string> = sheet1[0];
                 for (let i = 0; i < firstRow.length; i++){
-                    columns.push(firstRow[i]);
+                    columns.push({ id:i, name:firstRow[i] });
                 }
             }
             setUploadedColumns(columns);
         };
         reader.readAsArrayBuffer(xlsxFile);
-
     };
     useEffect(() => {
         if (xlsx){
@@ -129,7 +131,69 @@ export const ManageEvent = () => {
             setPhotos(e.target.files);
         }
     };
-    const handleUploadSubmit = async (e:React.FormEvent<HTMLFormElement>) => {};
+    const handleUploadSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!xlsx || !photos){
+            return;
+        }
+        const body = { columnLookup, eventId, adminSecret };
+        const form = new FormData();
+        form.append('xlsx', xlsx as Blob);
+        for (let i = 0; i < photos.length; i++){
+            form.append('photos', photos[i]);
+        }
+        form.append('body', JSON.stringify(body));
+        try {
+            const response = await axios.post('/api/contacts', form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+        getContacts();
+    };
+
+    const [contacts, setContacts] = useState <Array<VcardJson&{selected?:boolean}>>([]);
+    const getContacts = async () => {
+        try {
+            const response = await axios.get(`/api/contacts/all/${eventId}/${adminSecret}`);
+            const contacts = response.data as Array<VcardJson>;      
+            //sort by name
+            contacts.sort((a, b) => {
+                const aName = getEntry(a, 'FN') as string;
+                const bName = getEntry(b, 'FN') as string;
+                return aName.localeCompare(bName);
+            });      
+            setContacts(contacts);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        getContacts();
+    }, []);
+    const selectOrDeselectAll = () => {
+        const allSelected = contacts.every((contact) => contact.selected);
+        contacts.forEach((contact) => {
+            contact.selected = !allSelected;
+        });
+        setContacts([...contacts]);
+    };
+    const deleteSelected = async () => {
+        if (window.confirm('Are you sure you want to delete the selected contacts?')){
+            const selectedContacts = contacts.filter((contact) => contact.selected);
+            const contactIds = selectedContacts.map((contact) => contact.id);
+            try {
+                await axios.post('/api/contacts/delete/',{ ids:contactIds, adminSecret });
+                getContacts();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    };
 
 
     return (
@@ -167,7 +231,7 @@ export const ManageEvent = () => {
                 </div>
                 <div className='copyableLink'>
                     <h3>Registration Link</h3>
-                    <input type='text' value={`${window.location.origin}/event/${eventId}/${event?.registerSecret}/create/new`} readOnly />
+                    <input type='text' value={`${window.location.origin }/event/${eventId}/${event?.registerSecret}/create/new`} readOnly />
                     <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/event/${eventId}/${event?.registerSecret}/create/new`)}>Copy</button>
                 </div>
             </div>
@@ -175,38 +239,68 @@ export const ManageEvent = () => {
                 <h2>Upload Contacts</h2>
                 <form onSubmit={handleUploadSubmit} className="uploadContactsForm">
                     <label>xlsx Upload</label>
-                    <input type="file" name="xlsx" onChange={handleXlsxChange} accept="file/xlsx" multiple={false}/>
+                    <br/>
+                    <input type="file" style={{  position:'initial', marginBottom:5 }} name="xlsx" onChange={handleXlsxChange} accept="file/xlsx" multiple={false}/>
                     <br/>
                     <label>Photos Upload</label>
-                    <input type="file" name="photos" onChange={handlePhotosChange} accept="image/*" multiple={true}/>
                     <br/>
-                    {/* table with each row containing one column from columnLookup and next to it a dropdown of uploadedColumns */}
-                    {uploadedColumns.length > 0 ? <table>
-                        {Object.keys(columnLookup).map((column) => {
-                            return <tr key={column}>
-                                <td>{column}</td>
-                                <td>
-                                    <select value={columnLookup[column as keyof typeof columnLookup]} onChange={(e) => setColumnLookup({ ...columnLookup, [column]: e.target.value })}>
-                                        {uploadedColumns.map((uploadedColumn) => {
-                                            return <option key={uploadedColumn} value={uploadedColumn}>{uploadedColumn}</option>;
-                                        })}
-                                    </select>
-                                </td>
-                            </tr>;
-                        })}
-                    </table> : null}
+                    <input type="file" style={{  position:'initial', marginBottom:5 }} name="photos" onChange={handlePhotosChange} accept="image/*" multiple={true}/>
+                    <br/>
+                    {uploadedColumns.length > 0 ? 
+                        <>
+                            <p style={{ marginBottom:-10 }}>Please select the corrisponding column in your xlsx file for each data type</p>
+                            <table>
+                                {Object.keys(columnLookup).map((column) => {
+                                    return <tr key={column}>
+                                        <td>{column}</td>
+                                        <td>
+                                            <select value={columnLookup[column as keyof typeof columnLookup].id} onChange={(e) => setColumnLookup({ ...columnLookup, [column]: uploadedColumns.find((uploadedColumn) => uploadedColumn.id === parseInt(e.target.value)) as cell })}>
+                                                {uploadedColumns.map((uploadedColumn) => {
+                                                    return <option key={uploadedColumn.id} value={uploadedColumn.id}>{uploadedColumn.name}</option>;
+                                                })}
+                                            </select>
+                                        </td>
+                                    </tr>;
+                                })}
+                            </table>
+                        </> : null}
                         
-
+                    <button type="submit">Upload</button>
                 </form>
             </div>
             <div className='eventContacts' style={{ backgroundColor:event?.secondaryColor }}>
                 <h2>Event Contacts</h2>
+                <button className='confirmButton' onClick={()=>{
+                    //navigate to create contact page
+                    window.location.href = `${window.location.origin }/event/${eventId}/${event?.registerSecret}/create/new`;
+                }}> Add Contact</button>
+                <button className='editButton' onClick={selectOrDeselectAll}>Select/Deselect All</button>
+                <button className='deleteButton' onClick={deleteSelected}>Delete Selected</button>
+
                 <div className='contactList'>
-                    {/* <ContactCard contact={contact} /> */}
+                    {/* flex grid of contacts */}
+                    <div style={{ display:'flex', flexWrap:'wrap' }}>
+                        {contacts.map((contact) => 
+                            <div style={{ border:'solid 2px grey', }}>
+                                <input type='checkbox' checked={contact.selected} onChange={() => { contact.selected = !contact.selected; setContacts([...contacts]); }}  style={{ margin:5, width:20, height:20 }}/>
+                                <ContactCard key={contact.id} contact={contact} selected={contact.selected} />
+                                <button className='editButton' onClick={() => {window.location.href = `${window.location.origin }/event/${eventId}/${event?.adminSecret}/edit/${contact.id}`;}}>Edit Contact</button>
+                            </div>)}
+                    </div>
                 </div>
             </div>
             
         </>
     );
     
+};
+
+export const ContactCard = ({ contact,  }: { contact: VcardJson, selected?: boolean }) => {
+    return (
+        <div className='contactCard' style={{  width:150 }}>
+            <ContactImage contact={contact} size={100} isQrDisplayed={false} />
+            <h4 style={{ padding:'0 0 0 0', margin:'0 0 0 0 ' }}>{getEntry(contact, 'FN') as string}</h4>
+            
+        </div>
+    );
 };
