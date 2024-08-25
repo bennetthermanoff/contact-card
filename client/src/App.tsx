@@ -7,6 +7,7 @@ import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
 import { MajorTags } from './Components/MajorTags';
 import { useParams } from 'react-router-dom';
+import { useFavicon } from 'react-usefavicon';
 
 export const App = () => {
     const [contact, setContact] = useState<VcardJson>({
@@ -15,15 +16,33 @@ export const App = () => {
         'ORG':'loading',
         NOTE: 'loading',
     });
+    const [eventData, setEventData] = useState<{name:string, primaryColor:string, secondaryColor:string, icon:string}>({
+        name: 'Event Loading',
+        primaryColor: '#570d0d',
+        secondaryColor: '#290505',
+        icon: '',
+    });
     const [isQrDisplayed, setIsQrDisplayed] = useState(false);
     //path: '/event/:eventId/contact/:contactId',
     const { eventId, contactId } = useParams<{eventId: string, contactId: string}>();
     useEffect(() => {
         getContact();
+        getEvent();
     }, [contactId, eventId]);
     useEffect(() => {
         document.title = `${getEntry(contact, 'FN')}`;
     }, [contact]);
+    const [
+        faviconHref,
+        {
+            restoreFavicon,
+            drawOnFavicon,
+            setEmojiFavicon,
+            setFaviconHref,
+            jsxToFavicon,
+        },
+    ] = useFavicon();
+
 
     const getContact = async () => {
         try {
@@ -38,10 +57,24 @@ export const App = () => {
             });
         }
     };
+    const getEvent = async () => {
+        try {
+            const response = await axios.get(`/api/event/${eventId}`);
+            setEventData(response.data);
+            setFaviconHref(response.data.icon);
+        } catch (error) {
+            console.log(error);
+            setEventData({ name: 'Event Not Found',
+                primaryColor: '#570d0d',
+                secondaryColor: '#290505',
+                icon: '',
+            });
+        }
+    };
 
     return (
-        <div className="App">
-            <div className="cardContainer">
+        <div className="App" style={{ backgroundColor: eventData.secondaryColor }}>
+            <div className="cardContainer" style={{ backgroundColor: eventData.primaryColor }}>
                 <div className="rowGroup">
                     <div className="contactImage">
                         {!isQrDisplayed ? <div className='gradeTag'>{`${getEntry(contact, 'ROLE')}`}</div> : null}
@@ -49,6 +82,7 @@ export const App = () => {
                             contact={contact}
                             size={300}
                             isQrDisplayed={isQrDisplayed}
+                            eventIcon={eventData.icon}
                         />
                     </div>
                     <div className="contactInfo">

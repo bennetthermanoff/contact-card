@@ -5,4 +5,4 @@ build
 *.xlsx
 server/photos
 database.sqlite
-server/password.env
+server/.env

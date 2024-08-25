@@ -10,8 +10,8 @@ export const CreateEvent = () => {
     }>({
         name: '',
         password: '',
-        primaryColor: '#d94f4f',
-        secondaryColor: '#f1d929' });
+        primaryColor: '#570d0d',
+        secondaryColor: '#290505' });
     const [icon, setIcon] = useState<File|null>(null);
     const navigate = useNavigate();
 

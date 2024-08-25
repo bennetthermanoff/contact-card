@@ -4,8 +4,10 @@ import multer from 'multer';
 import sharp from 'sharp';
 import { EventModel } from '../models/events';
 
+
 export const useEventRoutes = (app:Express, upload:multer.Multer) => {
 	app.post('/api/event/create', upload.single('icon'), createEvent);
+	app.get('/api/event/:id', getEventPublic);
 	app.get('/api/event/:id/:adminSecret', getEvent);
 	app.delete('/api/event/:id/:adminSecret', deleteEvent);
 	app.put('/api/event/:id/:adminSecret', upload.single('icon'), updateEvent);
@@ -27,14 +29,14 @@ const createEvent:RequestHandler = async (req, res) => {
 			res.status(400).send('Missing required fields');
 			return;
 		}
-		if (password !== 'test') {
+		if (password !== process.env.EVENT_CREATE_PASSWORD) {
 			res.status(401).send('Unauthorized');
 			return;
 		}
 		const iconBuffer = icon ? await sharp(icon.buffer).jpeg().resize(256,256).toBuffer() : null;
 		const iconURI = iconBuffer ? `data:image/jpeg;base64,${iconBuffer.toString('base64')}` : null;
 
-		const event = await eventsDB.create({ name, adminSecret: process.env.GLOBAL_PASSWORD, registerSecret: process.env.GLOBAL_PASSWORD, icon: iconURI, primaryColor, secondaryColor });
+		const event = await eventsDB.create({ name, icon: iconURI, primaryColor, secondaryColor });
 
 		res.status(201).send(event);
 	}
@@ -63,6 +65,26 @@ const getEvent:RequestHandler = async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	}
 };
+
+const getEventPublic:RequestHandler = async (req, res) => {
+	try {
+		const { id } = req.params;
+		if (!id){
+			res.status(400).send('Missing required fields');
+			return;
+		}
+		const event = await eventsDB.findOne({ where:{ id } }).then((event) => event?.toJSON()) as EventModel;
+		if (!event){
+			res.status(404).send('Event not found');
+			return;
+		}
+		res.json({ name: event.name, primaryColor: event.primaryColor, secondaryColor: event.secondaryColor , icon: event.icon }).status(200);
+	} catch (e){
+		console.error(e);
+		res.status(500).send('Internal Server Error');
+	}
+};
+
 
 const deleteEvent:RequestHandler = async (req, res) => {
 	try {
