@@ -52,7 +52,7 @@ const createContact:RequestHandler = async (req, res) => {
 		vCard.firstName = name;
 		vCard.organization = tags as string;
 		vCard.photo.embedFromString(photoURI as string, 'image/jpeg');
-		vCard.note = note as string;
+		vCard.note = (note as string).replace(/(\r\n|\n|\r)/gm, '\u000A');
 		vCard.role = role as string;
 		vCard.title = pronouns as string;
 		vCard.version = '3.0';
@@ -159,7 +159,8 @@ const updateContact:RequestHandler = async (req, res) => {
 		vCard.firstName = name ? name : getEntry(contact, 'FN') as string;
 		vCard.organization = tags ? tags : getEntry(contact, 'ORG') as string;
 		vCard.photo.embedFromString(photoURI as string, 'image/jpeg');
-		vCard.note = note ? note : getEntry(contact, 'NOTE') as string;
+		vCard.note = note ? (note as string).replace(/(\r\n|\n|\r)/gm, '\u000A')
+			: getEntry(contact, 'NOTE') as string;
 		vCard.role = role ? role : getEntry(contact, 'ROLE') as string;
 		vCard.title = pronouns ? pronouns : getEntry(contact, 'TITLE') as string;
 		vCard.version = '3.0';
@@ -196,39 +197,54 @@ const deleteContact:RequestHandler = async (req, res) => {
 };
 
 type createContactsBody = {
-    columnLookup:Record<string, number>,
+    columnLookup:{
+		photoName:number,
+		id:number,
+		name:number,
+		pronouns:number,
+		year:number,
+		description:number,
+		majors:number
+	}
     eventId:string,
     adminSecret:string,
 };
 const createContacts:RequestHandler = async (req, res) => {
 	const { columnLookup, adminSecret, eventId } = req.body as createContactsBody;
 	const contacts:Array<PhotoNameContact> = [];
-	const { photos, xlsx:xlsxFiles } = req.files as { photos:Express.Multer.File[], xlsx:Express.Multer.File[] };
+	const { photos, xlsx: xlsxFile } = req.files as { photos:Express.Multer.File[], xlsx:Express.Multer.File[] };
 	try {
-		if (!columnLookup || !adminSecret || !eventId || !xlsxFiles) {
+		if (!columnLookup || !adminSecret || !eventId || !xlsxFile) {
 			res.status(400).send('Missing required fields');
 			return;
 		}
+		if (xlsxFile.length !== 1){
+			res.status(400).send('Only one xlsx file allowed');
+		}
 		const event = await eventsDB.findOne({ where:{ id:eventId, adminSecret } }).then((event) => event?.toJSON() as EventModel);
 
-		for (const file of xlsxFiles) {
-			const worksheetFromFile = xlsx.parse(file.buffer)[0];
-			for (let i = 1; i < worksheetFromFile.data.length; i++){
-				const contact: PhotoNameContact = {
-					photoName: undefined,
-					id: undefined,
-					name: undefined,
-					pronouns: undefined,
-					year: undefined,
-					description: undefined,
-					majors: undefined
-				};
-				for (const column of Object.keys(columnLookup)){// replace colon with unicode colon
-					contact[column as keyof PhotoNameContact] = (worksheetFromFile.data[i][columnLookup[column]]).toString().replace(':', '：');
+		
+		const worksheetFromFile = xlsx.parse(xlsxFile[0].buffer)[0];
+		for (let i = 1; i < worksheetFromFile.data.length; i++){
+			const contact: PhotoNameContact = {
+				photoName: undefined,
+				id: undefined,
+				name: undefined,
+				pronouns: undefined,
+				year: undefined,
+				description: undefined,
+				majors: undefined
+			};
+			for (const column of Object.keys(columnLookup)){// replace colon with unicode colon
+				let data = worksheetFromFile.data[i][columnLookup[column as keyof PhotoNameContact]];
+				if (columnLookup[column as keyof PhotoNameContact] === -1 || data === undefined){
+					data = '';
 				}
-				contacts.push(contact);
+				contact[column as keyof PhotoNameContact] = data;
 			}
+			contacts.push(contact);
 		}
+		
 		Promise.all(contacts.map( async(contact:PhotoNameContact) => {
 			const photoBinaryContact:PhotoBinaryContact = {
 				id: contact.id,

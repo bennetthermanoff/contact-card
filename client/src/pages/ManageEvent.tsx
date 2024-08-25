@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import  '../css/manageEvent.css';
+import { read, utils } from 'xlsx';
 
 type Event = {
     id:string,
@@ -20,8 +21,7 @@ export const ManageEvent = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [icon, setIcon] = useState<File|null>(null);
     const [updatedEvent, setUpdatedEvent] = useState<Pick<Event, 'name'|'primaryColor'|'secondaryColor'>>({ name: '', primaryColor: '', secondaryColor: '' });
-
-
+    
     const handleIconChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setIcon(e.target.files[0]);
@@ -73,6 +73,64 @@ export const ManageEvent = () => {
         }
     };
 
+    //upload
+    const [xlsx, setXlsx] = useState<File|null>(null);
+    const [photos, setPhotos] = useState<FileList|null>(null);
+    const [uploadedColumns, setUploadedColumns] = useState<Array<string>>([]);
+    const [columnLookup, setColumnLookup] = useState<{
+        photoName:string,
+        id:string,
+        name:string,
+        pronouns:string,
+        year:string,
+        description:string,
+        majors:string
+    }>({
+        photoName: 'NULL',
+        id: 'NULL',
+        name: 'NULL',
+        pronouns: 'NULL',
+        year: 'NULL',
+        description: 'NULL',
+        majors: 'NULL'
+    });
+    
+    const handleXlsxChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setXlsx(e.target.files[0]);
+        }
+    };
+    const updateUploadedColumns = async (xlsxFile:File) => {
+        const reader = new FileReader();
+        reader.onload = (e:ProgressEvent<FileReader>) => {
+            const data = e.target?.result;
+            const workbook = read(data, { type: 'array' });
+            const columns:Array<string> = ['NULL'];
+            const sheet1 = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]],{ header:1 }) as any[][];
+            if (sheet1.length > 0){
+                const firstRow = sheet1[0];
+                for (let i = 0; i < firstRow.length; i++){
+                    columns.push(firstRow[i]);
+                }
+            }
+            setUploadedColumns(columns);
+        };
+        reader.readAsArrayBuffer(xlsxFile);
+
+    };
+    useEffect(() => {
+        if (xlsx){
+            updateUploadedColumns(xlsx);
+        }
+    }, [xlsx]);
+    
+    const handlePhotosChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setPhotos(e.target.files);
+        }
+    };
+    const handleUploadSubmit = async (e:React.FormEvent<HTMLFormElement>) => {};
+
 
     return (
         <>
@@ -114,11 +172,40 @@ export const ManageEvent = () => {
                 </div>
             </div>
             <div className='eventContacts' style={{ backgroundColor:event?.secondaryColor }}>
+                <h2>Upload Contacts</h2>
+                <form onSubmit={handleUploadSubmit} className="uploadContactsForm">
+                    <label>xlsx Upload</label>
+                    <input type="file" name="xlsx" onChange={handleXlsxChange} accept="file/xlsx" multiple={false}/>
+                    <br/>
+                    <label>Photos Upload</label>
+                    <input type="file" name="photos" onChange={handlePhotosChange} accept="image/*" multiple={true}/>
+                    <br/>
+                    {/* table with each row containing one column from columnLookup and next to it a dropdown of uploadedColumns */}
+                    {uploadedColumns.length > 0 ? <table>
+                        {Object.keys(columnLookup).map((column) => {
+                            return <tr key={column}>
+                                <td>{column}</td>
+                                <td>
+                                    <select value={columnLookup[column as keyof typeof columnLookup]} onChange={(e) => setColumnLookup({ ...columnLookup, [column]: e.target.value })}>
+                                        {uploadedColumns.map((uploadedColumn) => {
+                                            return <option key={uploadedColumn} value={uploadedColumn}>{uploadedColumn}</option>;
+                                        })}
+                                    </select>
+                                </td>
+                            </tr>;
+                        })}
+                    </table> : null}
+                        
+
+                </form>
+            </div>
+            <div className='eventContacts' style={{ backgroundColor:event?.secondaryColor }}>
                 <h2>Event Contacts</h2>
                 <div className='contactList'>
                     {/* <ContactCard contact={contact} /> */}
                 </div>
             </div>
+            
         </>
     );
     

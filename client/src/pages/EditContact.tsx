@@ -14,7 +14,7 @@ type contactJSON = {
 };
 export const EditContact = ({ isNew }:{isNew:boolean}) => {
     const { eventId, secret, contactId } = useParams<{eventId:string, secret:string, contactId:string}>();
-    const [contact, setContact] = useState<contactJSON>();
+    const [contact, setContact] = useState<contactJSON>({ name: '', pronouns: '', role: '', tags: '', note: '' });
     const [photo, setPhoto] = useState<File>();
     const [isEditing, setIsEditing] = useState(isNew);
     const [updatedContact, setUpdatedContact] = useState<Pick<contactJSON, 'name'|'pronouns'|'role'|'tags'|'note'>>({ name: '' });
@@ -22,13 +22,15 @@ export const EditContact = ({ isNew }:{isNew:boolean}) => {
         try {
             const response = await axios.get(`/api/contacts/single/${contactId}`);
             const contact:VcardJson = response.data;
+            console.log(response.data);
+            
             setContact({
-                name: contact.FN as string,
-                pronouns: contact.TITLE as string,
-                role: contact.ROLE as string,
-                tags: contact.ORG as string,
-                note: contact.NOTE as string,
-                photo: contact.PHOTO?.value as string,
+                name: getEntry(contact, 'FN') as string,
+                pronouns: getEntry(contact, 'TITLE') as string,
+                role: getEntry(contact, 'ROLE') as string,
+                tags: (getEntry(contact, 'ORG') as string).replace(/\\/g,''),
+                note: getEntry(contact, 'NOTE') as string,
+                photo: getEntry(contact, 'PHOTO') as string,
             });
 
         } catch (error) {
@@ -118,7 +120,18 @@ export const EditContact = ({ isNew }:{isNew:boolean}) => {
                 </>
                 : 
                 <>
-                    <h2>{`${getEntry(contact, 'FN')}`}</h2>
+                    <h2>{contact?.name as string}</h2>
+                    <br/>
+                    <h3>{contact?.pronouns as string}</h3>
+                    <br/>
+                    <p>{contact?.role as string}</p>
+                    <br/>
+                    <div>
+                        {contact?.tags?.split(',').map((tag:string) => <h4 className='tag'>{tag}</h4>)}
+                    </div>
+                    <br/>
+                    <p>{contact?.note as string}</p>
+                    <br/>
                     <button onClick={handleEdit}>Edit</button>
                     <button onClick={handleDelete}>Delete</button>
                 </>

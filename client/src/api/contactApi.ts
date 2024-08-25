@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const getContactById = async (id:string) => axios.get(`/api/person/${id}`);
+export const getContactById = async (id:string) => axios.get(`/api/contacts/single/${id}`);
 
 
 interface ContactPostBase {

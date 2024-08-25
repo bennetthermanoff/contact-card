@@ -6,6 +6,7 @@ import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 import { DownloadButton } from './Components/DownloadButton';
 import { MajorTags } from './Components/MajorTags';
+import { useParams } from 'react-router-dom';
 
 export const App = () => {
     const [contact, setContact] = useState<VcardJson>({
@@ -15,18 +16,18 @@ export const App = () => {
         NOTE: 'loading',
     });
     const [isQrDisplayed, setIsQrDisplayed] = useState(false);
-    const idFromParams = window.location.pathname.split('/')[2];
-
+    //path: '/event/:eventId/contact/:contactId',
+    const { eventId, contactId } = useParams<{eventId: string, contactId: string}>();
     useEffect(() => {
         getContact();
-    }, []);
+    }, [contactId, eventId]);
     useEffect(() => {
         document.title = `${getEntry(contact, 'FN')}`;
     }, [contact]);
 
     const getContact = async () => {
         try {
-            const response = await getContactById(idFromParams);
+            const response = await getContactById(contactId as string);
             setContact(response.data);
         } catch (error) {
             console.log(error);
@@ -66,7 +67,7 @@ export const App = () => {
                     }</p>
                 </div>
                 <div className="contactButtons">
-                    <DownloadButton contactId={idFromParams} />
+                    {/* <DownloadButton contactId={idFromParams} /> */}
                     <button
                         className='contactButton'
                         onClick={() => setIsQrDisplayed(!isQrDisplayed)}
