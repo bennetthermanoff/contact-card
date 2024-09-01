@@ -1,92 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import './Pdf.css';
-import { getContactById, getAllContacts } from './api/contactApi';
 import { VcardJson, getEntry } from './types/Vcard';
 import { ContactImage } from './Components/ContactImage';
 import { MajorTags } from './Components/MajorTags';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 export const PdfApp = () => {
-    const [contact, setContact] = useState<VcardJson>({
-        FN: 'Contact Loading',
-        'X-PHONETIC-FIRST-NAME':'(load/ing)',
-        'ORG':'loading',
-        NOTE: 'loading',
-    });
-    const idFromParams = window.location.pathname.split('/')[2];
-
-    useEffect(() => {
-        const load = async () => {
-            await getContact();
-            var makepdf = document.getElementById('generatePDF');
-            var mywindow = window.open('', 'PRINT', 'height=600,width=600');
-            if (mywindow && makepdf) {
-                mywindow.document.write(makepdf.innerHTML);
-                mywindow.document.close();
-                mywindow.focus();
-                mywindow.print();
-            }
-            
-        };
-        load();
-    }, []);
-    useEffect(() => {
-        document.title = `${getEntry(contact, 'FN')}`;
-    }, [contact]);
-    const getContact = async () => {
-        try {
-            const response = await getContactById(idFromParams);
-            setContact(response.data);
-        } catch (error) {
-            console.log(error);
-            setContact({ FN: 'Contact Not Found',
-                'X-PHONETIC-FIRST-NAME':'(err/or)',
-                'ORG':'not found',
-                NOTE: 'contact not found 😔',
-            });
-        }
-    };
-
-    return (
-        <div className="PdfApp">
-            <div id="generatePDF">
-                <div className="rowGroup">
-                    <div className="contactImage">
-                        <ContactImage
-                            contact={contact}
-                            size={200}
-                            isQrDisplayed={true}
-                            pdf={true}
-                            id={contact.id}
-                        />
-                    </div>
-                    <div className="pdf-contactInfo">
-                        <div className='rowGroup'>
-                            <h1 className="contactName">{`${getEntry(contact, 'FN')}`}</h1> 
-                        </div>
-                        <h3 className="contactPronouns">{`${getEntry(contact,'TITLE')}`}</h3>
-                        <MajorTags contact={contact} pdf={true}/>                 
-                    </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-    );
-};
-
-export const PdfAppAll = () => {
     const [contacts, setContacts] = useState<VcardJson[]>([]);
     const [chunks, setChunk] = useState<Array<VcardJson[]>>([]);
+    const { eventId, adminSecret, contactIdsFromParams } = useParams<{eventId: string, adminSecret: string, contactIdsFromParams: string}>();
+    
+
     useEffect(() => {
         const load = async () => {
-            const response = await getAllContacts();
-            const contacts: VcardJson[] = response.data;
-
-            setContacts(contacts);
+            try {
+                const response = await axios.get(`/api/contacts/all/${eventId}/${adminSecret}`);
+                const contacts = response.data as Array<VcardJson>;
+                contacts.sort((a, b) => {
+                    const aName = getEntry(a, 'FN') as string;
+                    const bName = getEntry(b, 'FN') as string;
+                    return aName.localeCompare(bName);
+                });
+                //filter contacts by contactIdsFromParams
+                const contactIds = contactIdsFromParams?.split(',');
+                if (contactIds && contactIdsFromParams !== 'all') {
+                    const filteredContacts = contacts.filter((contact) => {
+                        if (!contact.id) {
+                            return false;
+                        }
+                        return contactIds.includes(contact.id);
+                    });
+                    setContacts(filteredContacts);
+                } else {
+                    setContacts(contacts);
+                }
+            } catch (error) {
+                console.log(error);
+            }
         };
         load();
-    },[]);
+    },[eventId, adminSecret, contactIdsFromParams]);
     useEffect(() => {
         const chunkSize = 10;
         const currentChunks = [];
@@ -94,10 +49,10 @@ export const PdfAppAll = () => {
             currentChunks.push(contacts.slice(i, i + chunkSize));
         }  
         setChunk(currentChunks);
-    },[contacts]);
+    },[contacts]);        
 
     return (
-        <div className="Pdf-Container">
+        <div style={{ backgroundColor:'white', color:'black' }} className="Pdf-Container">
             {chunks.map((chunk, index) => {
                 return (
                     <div className="Pdf-Page-Container">

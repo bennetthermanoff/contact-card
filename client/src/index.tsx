@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './App';
-import { PdfApp, PdfAppAll } from './Pdf';
+import { PdfApp } from './Pdf';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CreateEvent } from './pages/CreateEvent';
@@ -28,7 +28,7 @@ const Router = createBrowserRouter([
         errorElement: <h1>Not Found</h1>,
     },
     {
-        path: '/event/:eventId/pdf/',
+        path: '/event/:eventId/pdf/:adminSecret/:contactIdsFromParams',
         element: <PdfApp />,
         errorElement: <h1>Not Found</h1>,
     },

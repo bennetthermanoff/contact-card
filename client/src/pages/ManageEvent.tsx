@@ -194,6 +194,13 @@ export const ManageEvent = () => {
             }
         }
     };
+    const openPDF = () => {            
+        let contactIds = contacts.filter((contact) => contact.selected).map((contact) => contact.id).join(',');
+        if (contacts.every((contact) => contact.selected) || contacts.every((contact) => !contact.selected)){
+            contactIds = 'all';
+        }
+        window.open(`${window.location.origin }/event/${eventId}/pdf/${adminSecret}/${contactIds}`);
+    };
 
 
     return (
@@ -275,8 +282,9 @@ export const ManageEvent = () => {
                     window.location.href = `${window.location.origin }/event/${eventId}/${event?.registerSecret}/create/new`;
                 }}> Add Contact</button>
                 <button className='editButton' onClick={selectOrDeselectAll}>Select/Deselect All</button>
+                <button className='editButton' onClick={openPDF}>Generate PDF </button>
                 <button className='deleteButton' onClick={deleteSelected}>Delete Selected</button>
-
+                
                 <div className='contactList'>
                     {/* flex grid of contacts */}
                     <div style={{ display:'flex', flexWrap:'wrap' }}>
