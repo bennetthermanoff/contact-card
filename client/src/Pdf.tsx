@@ -67,7 +67,7 @@ export const PdfApp = () => {
                                                     size={180}
                                                     isQrDisplayed={true}
                                                     pdf={true}
-                                                    id={contact.id}
+                                                    id={eventId}
                                                 />
                                             </div>
                                             <div className="pdf-contactInfo" >

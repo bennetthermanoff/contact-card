@@ -18,7 +18,7 @@ export const ContactImage = ({
   eventIcon?:string;
 }) => {
     if (isQrDisplayed) {
-        return <QR size={size} pdf={pdf} overrideURL={!pdf ? undefined : 'https://contacts.hermanoff.dev/contact/' + id} />;
+        return <QR size={size} pdf={pdf} overrideURL={!pdf ? undefined : `${window.location.origin}/event/${id}/contact/${contact.id}`} />;
     } else {
         if (contact.PHOTO) {
             return (
