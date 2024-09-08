@@ -151,7 +151,7 @@ export const ManageEvent = () => {
                     isResolved = true;
                     resolve(null);
                 }
-            }, 10000);
+            }, 20000);
 
             FileResizer.imageFileResizer(
                 file,
