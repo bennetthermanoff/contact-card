@@ -5,6 +5,7 @@ import  '../css/manageEvent.css';
 import { read, utils } from 'xlsx';
 import { VcardJson, getEntry } from '../types/Vcard';
 import { ContactImage } from '../Components/ContactImage';
+import FileResizer from 'react-image-file-resizer';
 
 type Event = {
     id:string,
@@ -79,7 +80,7 @@ export const ManageEvent = () => {
 
     //upload
     const [xlsx, setXlsx] = useState<File|null>(null);
-    const [photos, setPhotos] = useState<FileList|null>(null);
+    const [photos, setPhotos] = useState<Array<File>|null>(null);
     const [uploadedColumns, setUploadedColumns] = useState<Array<cell>>([]);
     
     const [columnLookup, setColumnLookup] = useState<{
@@ -126,11 +127,53 @@ export const ManageEvent = () => {
         }
     }, [xlsx]);
     
-    const handlePhotosChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotosChange = async (e:React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setPhotos(e.target.files);
+            const files = e.target.files;
+            const resizedPhotos:Array<File> = [];
+            await Promise.all(Array.from(files).map(async (file) => {
+                const resizedPhoto = await resizeFile(file);
+                if (resizedPhoto){
+                    resizedPhotos.push(resizedPhoto);
+                }
+            }));
+            
+            console.log(resizedPhotos);
+            setPhotos(resizedPhotos as Array<File>);
+            
         }
     };
+    const resizeFile: (file: File) => Promise<File | null> = (file) =>
+        new Promise((resolve) => {
+            let isResolved = false;
+            const timeout = setTimeout(() => {
+                if (!isResolved) {
+                    isResolved = true;
+                    resolve(null);
+                }
+            }, 10000);
+
+            FileResizer.imageFileResizer(
+                file,
+                1000,
+                1000,
+                'JPEG',
+                75,
+                0,
+                (uri) => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        clearTimeout(timeout);
+                        resolve(uri as File);
+                    }
+                    if (!(uri instanceof File)) {
+                        console.error('Not a file');
+                    }
+                },
+                'file',
+            );
+        });
+
     const handleUploadSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!xlsx || !photos){
@@ -271,8 +314,7 @@ export const ManageEvent = () => {
                                 })}
                             </table>
                         </> : null}
-                        
-                    <button type="submit">Upload</button>
+                    {uploadedColumns.length > 0 && photos ? <button type="submit">Upload</button> : null}
                 </form>
             </div>
             <div className='eventContacts' style={{ backgroundColor:event?.secondaryColor }}>

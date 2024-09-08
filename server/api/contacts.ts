@@ -299,7 +299,10 @@ const createContacts:RequestHandler = async (req, res) => {
 			if (photoName === undefined){
 				return photoBinaryContact;
 			}
-			const photo = photos.find((file) => file.originalname === photoName);
+			
+			const photoNameSplit = photoName.split('.');
+			const photoNameWithoutExtension = photoNameSplit.slice(0, photoNameSplit.length - 1).join('.');
+			const photo = photos.find((photo) => photo.originalname.includes(photoNameWithoutExtension));
 			if (!photo){
 				console.log(`Photo ${photoName} does not exist`);
 				return photoBinaryContact;
@@ -328,7 +331,7 @@ const createContacts:RequestHandler = async (req, res) => {
 					eventId
 				} }).then((contact) => contact?.toJSON() as ContactModel);
 				const contactAlreadyExists = existingContact !== undefined;
-				if (!contactAlreadyExists){
+				if (!contactAlreadyExists && contact.name){
 					return contactsDB.create({ vcard:vCardString, eventId });
 				}
 			})).then(() => {
