@@ -3,7 +3,7 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-let PORT = 28873;
+let PORT = 3001;
 const app = express();
 import path from 'path';
 import { useContactRoutes } from './api/contacts';
@@ -41,7 +41,7 @@ if (process.env.IS_PROD) {
 	if (process.pid) {
 		console.log('This process is running on pid ' + process.pid);
 	}
-	PORT = 3000;
+	PORT = 28873;
 	app.use(express.static(path.join(__dirname, '../client/build')));
 	console.log('IS_PROD');
 	app.get('*', (req, res) => {
