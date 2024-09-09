@@ -5,7 +5,7 @@ import { contactsModel } from './contacts';
 export const sequelize = new Sequelize({
 	dialect: 'sqlite',
 	storage: '../database.sqlite',
-	logging:console.log
+	logging: false
 });
 
 export const eventsDB = sequelize.define('events', eventsModel);

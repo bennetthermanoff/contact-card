@@ -3,7 +3,7 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-let PORT = 3001;
+let PORT = 28873;
 const app = express();
 import path from 'path';
 import { useContactRoutes } from './api/contacts';
