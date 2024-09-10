@@ -72,6 +72,11 @@ const getContact:RequestHandler = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const contact = await contactsDB.findOne({ where:{ id } }).then((contact) =>contact?.toJSON() as ContactModel);
+		if (!contact) {
+			res.status(404).send('Contact not found');
+			return;
+		}
+		contactsDB.update({ hits:contact.hits + 1 }, { where:{ id } });
 		const card = new vcard();
 		card.readData(contact.vcard, (err:any, json:any) => {
 			if (err) {
